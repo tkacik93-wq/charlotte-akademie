@@ -306,7 +306,7 @@ function lessonDoneHtml(){
 function testsHtml(){
  const groups=[['iy','Vyjmenovaná slova B a L'],['case','Pády – všech sedm'],['prefix','Předpony a předložky'],['orth','Ú/ů, bě/pě/vě a souhlásky'],['spell','Psaní celých slov'],['pos','Slovní druhy'],['mix','Mix podle pracovního sešitu']];
  return '<section class="panel"><h1>📝 Krátké testíky</h1><p class="subtitle">Nejdřív si můžeš učivo poslechnout v části Učím se s učitelkou. V testíku už nápovědu nedostaneš a vysvětlení chyb uvidíš na konci.</p><div class="tiles">'+
- groups.map(([id,name])=>'<button class="tile" data-test="'+id+'"><span class="emoji">📝</span><span><strong>'+esc(name)+'</strong><small>8 otázek, u mixu 12 · výsledky a vysvětlení po dokončení</small></span></button>').join('')+
+ groups.map(([id,name])=>'<button class="tile" data-test="'+id+'"><span class="emoji">📝</span><span><strong>'+esc(name)+'</strong><small>'+(id==='mix'?12:Math.min(8,taskPool(id).length))+' otázek · výsledky a vysvětlení po dokončení</small></span></button>').join('')+
  '</div></section>';
 }
 
