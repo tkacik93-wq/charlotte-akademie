@@ -366,6 +366,20 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 }
 .pwa-update{position:sticky;z-index:10;top:0;margin:0 0 12px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#e6fff7;border:2px solid #71c9a5;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,.09)}
 .pwa-update[hidden]{display:none}
+
+/* Vlastní dotyková číselná klávesnice – bez systémové klávesnice Androidu. */
+.math-numpad{width:min(100%,390px);margin:16px auto 14px;padding:12px;border:1px solid #d9def7;border-radius:22px;background:#f4f5ff}
+.math-numpad-label{text-align:center;font-weight:800;font-size:.93rem;color:#596486;margin-bottom:9px}
+.math-numpad-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.math-key{min-width:0;min-height:60px;border-radius:14px;border:1px solid #cfd4ed;background:#fff;color:#243253;font-size:1.65rem;font-weight:850;box-shadow:0 3px 0 #d9dbeb;touch-action:manipulation}
+.math-key:active{background:#e6e9ff;transform:translateY(1px);box-shadow:0 1px 0 #d9dbeb}
+.math-key.utility{background:#e9e8fb;font-size:1.15rem;color:#5543ac}
+.math-key:focus-visible{outline:3px solid #ffb444;outline-offset:1px}
+.math-numpad-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.math-numpad-actions .math-key{min-height:51px;font-size:1rem}
+[data-math-input]{caret-color:transparent;touch-action:manipulation;cursor:pointer}
+[data-math-input].math-active-field{outline:3px solid #7b61ff;outline-offset:2px;border-color:#7b61ff}
+@media(max-width:600px){.math-numpad{width:min(100%,350px);padding:9px;margin:13px auto}.math-key{min-height:56px;font-size:1.55rem}.math-numpad-grid{gap:6px}}
 </style>
 </head>
 <body>
@@ -967,7 +981,7 @@ function checkAnswer(){
   const input=$('#number-answer');
   if(!input)return;
   const raw=input.value.trim();
-  if(!/^-?\d{1,4}$/.test(raw)){input.focus();input.setCustomValidity('Zadej celé číslo.');input.reportValidity();input.setCustomValidity('');return;}
+  if(!/^-?\d{1,5}$/.test(raw)){input.focus();input.setCustomValidity('Zadej celé číslo.');input.reportValidity();input.setCustomValidity('');return;}
   const value=Number(raw),q=game.questions[game.index],correct=value===q.value;
   if(feedback && feedback.stage==='correction'){
     if(correct){feedback={stage:'fixed',correct:false,guess:feedback.guess};playSound('correct');}
@@ -1223,7 +1237,7 @@ function columnForm(q){
   const digitsRow=n=>Array.from({length:size},(_,i)=>`<span class="digit-box">${Math.floor(n/(10**(size-i-1)))%10}</span>`).join('');
   const inputs=Array.from({length:size},(_,rev)=>{
     const i=size-1-rev;
-    return `<input type="text" inputmode="numeric" maxlength="1" required pattern="[0-9]" id="col-digit-${i}" aria-label="Číslice výsledku: ${names[i]}" autocomplete="off" placeholder="?">`;
+    return `<input type="text" inputmode="none" readonly data-math-input maxlength="1" required pattern="[0-9]" id="col-digit-${i}" aria-label="Číslice výsledku: ${names[i]}" autocomplete="off" placeholder="?">`;
   }).join('');
   const carryChecks=q.columns.slice(0,-1).map((col,i)=>
     `<label class="carry-choice"><input type="checkbox" id="col-carry-${i}"> ☝️ Počítám ${names[i]} a držím si 1 do ${names[i+1]}</label>`).join('');
@@ -1236,6 +1250,7 @@ function columnForm(q){
       <div class="digit-row" style="--columns:${size}"><span class="math-prefix">=</span>${inputs}</div>
     </div>
     <div class="carry-list">${carryChecks}</div>
+    ${mathNumpadHtml(false)}
     <div class="notice" style="margin:12px 0">${q.operation==='sub'?'<strong>Příklad:</strong> Když máš 4 − 5, řekneš „5 a kolik je do 14?“, napíšeš 9 a zapamatuješ si jedničku k dolním desítkám.':'<strong>Příklad:</strong> Když 8 + 7 = 15, zapíšeš 5 a jedničku si zapamatuješ do dalšího sloupce.'}</div>
     <button type="submit" class="btn mint">✅ Zkontrolovat číslice i přenosy</button>
   </form>`;
@@ -1246,9 +1261,10 @@ function writtenForm(q){
     <div class="vertical-task" aria-label="${q.a} ${sign} ${q.b}"><div>${q.a}</div><div class="line-two"><span>${sign}</span>${q.b}</div><div class="stroke"></div><div class="empty-final">?</div></div>
     <form id="written-form" class="written-form" autocomplete="off">
       <p class="small">Rozlož druhé číslo: <strong>${q.b} = ${part[0]} + ${part[1]} + ${part[2]}</strong>.</p>
-      <div class="step-row"><label for="written-step1">1. Stovky: ${q.a} ${sign} ${part[0]} =</label><input type="number" id="written-step1" required aria-label="Mezivýsledek po stovkách"></div>
-      <div class="step-row"><label for="written-step2">2. Desítky: výsledek výše ${sign} ${part[1]} =</label><input type="number" id="written-step2" required aria-label="Mezivýsledek po desítkách"></div>
-      <div class="step-row final-row"><label for="written-final">3. Jednotky: výsledek výše ${sign} ${part[2]} =</label><input type="number" id="written-final" required aria-label="Konečný výsledek"></div>
+      <div class="step-row"><label for="written-step1">1. Stovky: ${q.a} ${sign} ${part[0]} =</label><input type="text" inputmode="none" readonly data-math-input maxlength="5" id="written-step1" required aria-label="Mezivýsledek po stovkách"></div>
+      <div class="step-row"><label for="written-step2">2. Desítky: výsledek výše ${sign} ${part[1]} =</label><input type="text" inputmode="none" readonly data-math-input maxlength="5" id="written-step2" required aria-label="Mezivýsledek po desítkách"></div>
+      <div class="step-row final-row"><label for="written-final">3. Jednotky: výsledek výše ${sign} ${part[2]} =</label><input type="text" inputmode="none" readonly data-math-input maxlength="5" id="written-final" required aria-label="Konečný výsledek"></div>
+      ${mathNumpadHtml(true)}
       <button type="submit" class="btn mint">✅ Zkontrolovat postup i výsledek</button>
     </form>
   </div>`;
@@ -1273,7 +1289,81 @@ function gameHtml(){
   ${feedback?feedbackHtml(q):`<div class="voice-assist"><button class="btn secondary tiny" type="button" id="read-question">🔊 Přečíst zadání</button><span class="small">${csVoice()?'Český hlas je dostupný.':'Český hlas není v systému dostupný; zadání zůstává na obrazovce.'}</span></div>`+(q.kind==='compare'?compareForm(q):q.kind==='written'?writtenForm(q):q.kind==='column'?columnForm(q):answerForm(false))}
   </div></div></section>`;
 }
-function answerForm(correction){return `<form id="answer-form"><label class="answer-label" for="number-answer">${correction?'Napiš správný výsledek':'Napiš výsledek'}</label><input id="number-answer" class="answer" type="text" inputmode="numeric" pattern="-?[0-9]*" maxlength="4" autocomplete="off" placeholder="?" aria-label="Výsledek příkladu"><div class="answer-actions"><button class="btn mint" type="submit">${correction?'✅ Opravit odpověď':'✅ Odpovědět'}</button></div></form>${correction?'':`<p class="hint">Klidně si počítej na papíře. Není kam spěchat.</p>`}`;}
+
+/* Vstup je řízen výhradně vlastní číselnou klávesnicí. Všechna číselná pole jsou readonly + inputmode=none. */
+let activeMathInputId=null;
+function mathNumpadHtml(allowNegative=false){
+  const digits=['1','2','3','4','5','6','7','8','9',allowNegative?'±':'C','0','⌫'];
+  return '<div class="math-numpad" aria-label="Vlastní číselná klávesnice">'+
+    '<div class="math-numpad-label">🔢 Vyplň odpověď dotykem</div>'+
+    '<div class="math-numpad-grid">'+digits.map(d=>{
+      const value=d==='±'?'sign':d==='⌫'?'back':d==='C'?'clear':d;
+      return '<button type="button" class="math-key '+((d==='⌫'||d==='C'||d==='±')?'utility':'')+'" data-math-key="'+value+'" aria-label="'+(d==='⌫'?'Smazat číslici':d==='C'?'Vymazat':d==='±'?'Změnit znaménko':d)+'">'+d+'</button>';
+    }).join('')+'</div>'+
+    '<div class="math-numpad-actions"><button type="button" class="math-key utility" data-math-key="clear">Vymazat</button>'+
+    '<button type="button" class="math-key utility" data-math-key="next">Další políčko →</button></div></div>';
+}
+function mathInputOrder(){
+  const fields=[...document.querySelectorAll('[data-math-input]')];
+  if(fields.some(el=>el.id.startsWith('col-digit-'))){
+    return fields.sort((a,b)=>Number(a.id.slice(10))-Number(b.id.slice(10)));
+  }
+  return fields;
+}
+function selectMathField(id){
+  const fields=mathInputOrder();
+  const found=fields.find(el=>el.id===id)||fields[0];
+  if(!found)return null;
+  activeMathInputId=found.id;
+  fields.forEach(el=>el.classList.toggle('math-active-field',el===found));
+  // Readonly a inputmode=none společně brání otevření softwarové klávesnice Androidu.
+  try{found.focus({preventScroll:true});}catch(e){}
+  return found;
+}
+function currentMathField(){
+  const fields=mathInputOrder();
+  if(!fields.length)return null;
+  return selectMathField(fields.some(el=>el.id===activeMathInputId)?activeMathInputId:
+    (fields.some(el=>el.id==='col-digit-0')?'col-digit-0':fields[0].id));
+}
+function nextMathField(field){
+  const fields=mathInputOrder();
+  const index=fields.findIndex(el=>el.id===field.id);
+  return selectMathField(fields[Math.min(index+1,fields.length-1)]?.id);
+}
+function pressMathKey(key){
+  const field=currentMathField();if(!field)return;
+  const text=field.value||'';
+  const max=Number(field.getAttribute('maxlength'))||5;
+  const isSingle=field.id.startsWith('col-digit-');
+  const signed=field.id!=='parent-pin'&&!isSingle;
+  if(key==='next'){nextMathField(field);return;}
+  if(key==='clear'){field.value='';}
+  else if(key==='back'){field.value=text.slice(0,-1);}
+  else if(key==='sign'){if(signed)field.value=text.startsWith('-')?text.slice(1):'-'+text;}
+  else if(/^[0-9]$/.test(key)){
+    // Jednociferné políčko při opravě přepíšeme; jiné pole lze mazat tlačítkem ⌫.
+    field.value=isSingle?key:(text.length<max?text+key:text);
+  }
+  field.dispatchEvent(new Event('input',{bubbles:true}));
+  if(isSingle&&/^[0-9]$/.test(key)){
+    const fields=mathInputOrder(),idx=fields.findIndex(el=>el.id===field.id);
+    if(idx>=0&&idx<fields.length-1)nextMathField(field);
+    else selectMathField(field.id);
+  }else selectMathField(field.id);
+}
+function wireMathPad(){
+  document.querySelectorAll('[data-math-input]').forEach(field=>{
+    field.addEventListener('click',()=>selectMathField(field.id));
+    field.addEventListener('focus',()=>{activeMathInputId=field.id;
+      document.querySelectorAll('[data-math-input]').forEach(el=>el.classList.toggle('math-active-field',el===field));
+    });
+  });
+  document.querySelectorAll('[data-math-key]').forEach(key=>key.addEventListener('click',()=>pressMathKey(key.dataset.mathKey)));
+  if(document.querySelector('[data-math-input]'))currentMathField();
+}
+
+function answerForm(correction){return `<form id="answer-form"><label class="answer-label" for="number-answer">${correction?'Napiš správný výsledek':'Napiš výsledek'}</label><input id="number-answer" class="answer" type="text" inputmode="none" readonly data-math-input pattern="-?[0-9]*" maxlength="5" autocomplete="off" placeholder="?" aria-label="Výsledek příkladu">${mathNumpadHtml(true)}<div class="answer-actions"><button class="btn mint" type="submit">${correction?'✅ Opravit odpověď':'✅ Odpovědět'}</button></div></form>${correction?'':`<p class="hint">Klidně si počítej na papíře. Není kam spěchat.</p>`}`;}
 function feedbackHtml(q){
   if(game.mode==='schoolTest')return `<div class="feedback"><h3>📝 Odpověď zaznamenána</h3><p>Pokračuj v testu. Správné výsledky i známku uvidíš na konci.</p><button id="next-question" class="btn mint">${game.index+1===game.questions.length?'🏁 Vyhodnotit test':'➡️ Další příklad'}</button></div>`;
   if(q.kind==='compare'||q.kind==='written'||q.kind==='column')return specialFeedbackHtml(q);
@@ -1323,7 +1413,7 @@ function progressHtml(){
    </section>`;
 }
 function parentGateHtml(){return `<section class="panel gate"><div class="big-emoji">🔐</div><div class="eyebrow">Jen pro dospělé</div><h2>Rodičovská sekce</h2><p class="small">Zadej rodičovský kód. Výsledky a jejich mazání pak uvidíš jen v této části.</p>
-  <form id="parent-pin-form"><label for="parent-pin">Rodičovský kód</label><input type="password" class="parent-pin" id="parent-pin" inputmode="numeric" autocomplete="off" placeholder="•••••••" required maxlength="20"><button class="btn" type="submit">🔓 Odemknout</button></form>
+  <form id="parent-pin-form"><label for="parent-pin">Rodičovský kód</label><input type="password" class="parent-pin" id="parent-pin" inputmode="none" readonly data-math-input autocomplete="off" placeholder="•••••••" required maxlength="20">${mathNumpadHtml(false)}<button class="btn" type="submit">🔓 Odemknout</button></form>
   ${pinError?`<p class="pin-error" role="alert">Kód nesouhlasí. Zkus to ještě jednou.</p>`:''}<p class="small" style="margin-top:20px">Jde o jednoduchou ochranu menu v offline souboru, ne o skutečné zabezpečení dat.</p></section>`;}
 
 function countFor(id){const x=data.skills[id]||{yes:0,no:0};return (Number(x.yes)||0)+(Number(x.no)||0);}
@@ -1557,6 +1647,7 @@ function importResults(file){
   reader.onerror=()=>alert('Soubor se nepodařilo načíst.');reader.readAsText(file,'utf-8');
 }
 function wire(){
+  wireMathPad();
   const on=(selector,type,fn)=>{const el=$(selector);if(el)el.addEventListener(type,fn);};
   on('#start-diagnostic','click',()=>start('diagnostic'));
   on('#start-school-test','click',()=>start('schoolTest'));
@@ -1607,8 +1698,7 @@ function render(){
   const content={home:homeHtml,daily:dailyHtml,practice:practiceHtml,tablePractice:tablePracticeHtml,tableOverview:tableOverviewHtml,school:schoolHtml,schoolTest:schoolTestHtml,game:gameHtml,summary:summaryHtml,progress:progressHtml,parentGate:parentGateHtml,parents:parentsHtml};
   $('#main').innerHTML=(content[view]||homeHtml)();
   wire();
-  if(view==='game' && (!feedback || feedback.stage==='correction'))($('#number-answer')||$('#col-digit-0')||$('#written-step1'))?.focus();
-  if(view==='parentGate')$('#parent-pin')?.focus();
+  // Výběr aktivního pole provádí vlastní klávesnice; systémovou klávesnici nikdy neotvíráme.
 }
 $('#nav').addEventListener('click',e=>{const btn=e.target.closest('[data-view]');if(btn)go(btn.dataset.view);});
 $('#parent-button').addEventListener('click',()=>{parentUnlocked=false;go('parents');});
