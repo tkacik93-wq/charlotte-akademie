@@ -1,0 +1,42 @@
+ŠÁJA – MATEMATICKÁ AKADEMIE PRO ANDROID
+======================================
+
+CO TO JE
+Toto je připravená PWA (instalovatelná webová aplikace) ze známé Windows V11.
+NENÍ TO JEŠTĚ APK. Aby fungovala instalace na tablet, musí být soubory
+umístěné na HTTPS webu. Samotné otevření index.html ze souborů v tabletu nestačí.
+
+PRVNÍ NASAZENÍ – GITHUB PAGES
+1. Přihlas se na https://github.com/.
+2. Vytvoř nový veřejný repozitář pro akademii (pro čistý TWA/APK je vhodné
+   pojmenování TVOJE_UZIVATELSKE_JMENO.github.io; pro PWA stačí např. saja-akademie).
+3. Nahraj do kořene repozitáře soubory index.html, sw.js,
+   manifest.webmanifest, icon-192.png a icon-512.png.
+4. Settings -> Pages -> Deploy from a branch -> main / (root) -> Save.
+5. Po publikování otevři HTTPS adresu na tabletu v Google Chrome.
+6. Menu Chrome (tři tečky) -> Instalovat aplikaci nebo Přidat na plochu.
+7. Otevři akademii z ikony na ploše. První spuštění vyžaduje internet,
+   pak může fungovat offline.
+
+JAK PŘIDAT AKTUALIZACI
+1. Změň webové soubory (např. index.html).
+2. Změň CACHE_NAME v sw.js z android-v1 na android-v2 atd.
+3. Nahraj nové soubory na STEJNOU HTTPS adresu.
+4. Po dalším otevření s internetem se stáhne nová verze, akademie nabídne
+   Aktualizovat. Není nutné přeinstalovat aplikaci ani mazat výsledky.
+
+CO DĚLÁME DÁL
+Z této PWA lze po publikování sestavit APK pomocí Bubblewrap/TWA.
+Vyžaduje to URL, podpis aplikace a ověření vlastnictví webové adresy
+prostřednictvím /.well-known/assetlinks.json.
+Podpisový klíč si vlastník bezpečně uchová pro budoucí aktualizace APK.
+
+SOUKROMÍ
+Učební výsledky se ukládají lokálně v tabletu. Hosting obsahuje pouze soubory
+aplikace. Když smažeš její data nebo vymažeš data Chrome, mohou se výsledky ztratit.
+Používej pravidelně export výsledků přes Pro rodiče.
+Rodičovský kód je jednoduché místní omezení přístupu, nikoliv zabezpečené heslo.
+
+ČESKÝ HLAS
+Záleží na dostupnosti českého hlasu v Androidu a Google Chrome.
+Pokud není český hlas dostupný, akademie dál funguje a ukazuje vysvětlení textem.

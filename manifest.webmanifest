@@ -1,0 +1,30 @@
+{
+  "name": "Šája – Matematická akademie",
+  "short_name": "Šájina akademie",
+  "description": "Matematické procvičování, školní testy a denní úkoly pro Šáju.",
+  "lang": "cs",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6ff",
+  "theme_color": "#725cff",
+  "orientation": "any",
+  "categories": [
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
