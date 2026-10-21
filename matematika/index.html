@@ -380,6 +380,20 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 [data-math-input]{caret-color:transparent;touch-action:manipulation;cursor:pointer}
 [data-math-input].math-active-field{outline:3px solid #7b61ff;outline-offset:2px;border-color:#7b61ff}
 @media(max-width:600px){.math-numpad{width:min(100%,350px);padding:9px;margin:13px auto}.math-key{min-height:56px;font-size:1.55rem}.math-numpad-grid{gap:6px}}
+
+/* Režim soustředění: při jakémkoliv matematickém testu či procvičování
+   ponecháme jen příklad, odpovědi, průběh testu a možnost pauzy/ukončení. */
+.shell.math-focus{max-width:1140px;padding-top:clamp(10px,2vw,20px)}
+.shell.math-focus > .topbar,
+.shell.math-focus > .nav,
+.shell.math-focus > .footer,
+.shell.math-focus > #pwa-update{display:none!important}
+.shell.math-focus .game-wrap{max-width:1050px;margin:0 auto}
+.shell.math-focus .question-layout{grid-template-columns:minmax(0,1fr);gap:0}
+.shell.math-focus .question-avatar{display:none!important}
+.shell.math-focus .question-box{min-width:0;padding:20px 12px}
+.shell.math-focus .game-wrap{padding:clamp(18px,3vw,30px)}
+@media(max-width:600px){.shell.math-focus .question-box{padding:14px 2px}.shell.math-focus .game-wrap{padding:16px 12px}}
 </style>
 </head>
 <body>
@@ -1691,6 +1705,7 @@ function wire(){
   on('#import-file','change',e=>importResults(e.target.files[0]));
 }
 function render(){
+  document.querySelector('.shell').classList.toggle('math-focus',view==='game');
   document.querySelectorAll('#nav [data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===view));
   $('#level-pill').textContent=`⭐ Úroveň ${level()}`;
   const soundBtn=$('#sound-toggle');soundBtn.textContent=soundOn?'🔊 Zvuk zapnutý':'🔇 Zvuk vypnutý';soundBtn.setAttribute('aria-pressed',String(soundOn));
