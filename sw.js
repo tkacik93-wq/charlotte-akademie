@@ -1,5 +1,5 @@
 /* Společný offline režim pro Šájinu akademii. */
-const CACHE_NAME='saja-akademie-android-hub-v3';
+const CACHE_NAME='saja-akademie-android-hub-v4';
 const FILES=['./','./index.html','./matematika/','./matematika/index.html','./cestina/','./cestina/index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./cestina/icon-192.png','./cestina/icon-512.png'];
 self.addEventListener('install',event=>{event.waitUntil((async()=>{
 const cache=await caches.open(CACHE_NAME);
