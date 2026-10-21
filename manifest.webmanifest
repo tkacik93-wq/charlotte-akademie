@@ -1,7 +1,7 @@
 {
-  "name": "Šája – Matematická akademie",
+  "name": "Šájina akademie – Matematika a čeština",
   "short_name": "Šájina akademie",
-  "description": "Matematické procvičování, školní testy a denní úkoly pro Šáju.",
+  "description": "Matematika a čeština pro Šáju. Výsledky jednotlivých předmětů se ukládají v tabletu.",
   "lang": "cs",
   "dir": "ltr",
   "start_url": "./",

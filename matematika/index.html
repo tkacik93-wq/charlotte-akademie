@@ -1,0 +1,1667 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#725cff">
+<title>Šája – Matematická akademie</title>
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="../icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="description" content="České matematické procvičování pro Šáju. Násobilka, školní učivo, denní úkoly a výsledky.">
+<style>
+:root{
+  --bg:#f4f6ff;
+  --bg2:#fffaf2;
+  --panel:#ffffff;
+  --panel-soft:#f8f5ff;
+  --ink:#22304d;
+  --muted:#66728f;
+  --line:#dbe2ff;
+  --accent:#7b61ff;
+  --accent2:#4fc3b3;
+  --accent3:#ffb84d;
+  --good:#2aa56b;
+  --bad:#d15c7a;
+  --shadow:0 14px 40px rgba(69,84,138,.14);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  min-height:100vh;
+  font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at top left, #e7e1ff 0, transparent 34%),
+    radial-gradient(circle at top right, #def8f0 0, transparent 29%),
+    linear-gradient(180deg,var(--bg),var(--bg2));
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ffcd57;outline-offset:3px}
+.shell{max-width:1180px;margin:auto;padding:18px 14px 34px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.badge-logo{
+  width:58px;height:58px;border-radius:18px;
+  display:grid;place-items:center;
+  font-size:30px;font-weight:900;
+  background:linear-gradient(135deg,#b7a6ff,#7cf0de);
+  box-shadow:var(--shadow);
+}
+.brand h1{margin:0;font-size:1.3rem;line-height:1.1}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:.95rem}
+.top-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{padding:9px 13px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:800;box-shadow:var(--shadow)}
+.btn{
+  border:0;border-radius:16px;padding:12px 18px;font-weight:800;
+  background:linear-gradient(135deg,#8f7cff,#725cff);color:#fff;box-shadow:var(--shadow)
+}
+.btn:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.mint{background:linear-gradient(135deg,#74e7c8,#4fc3b3);color:#12373a}
+.btn.warn{background:linear-gradient(135deg,#ff97ac,#d85f7d)}
+.btn.tiny{padding:9px 13px;border-radius:14px;font-size:.95rem}
+.nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.nav button{padding:10px 15px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--muted);font-weight:800}
+.nav button.active{background:#efeaff;color:var(--accent);border-color:#cfc2ff}
+.panel{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:22px}
+.hero{display:grid;grid-template-columns:1.25fr .9fr;gap:18px;align-items:stretch}
+.hero h2{font-size:clamp(2rem,4vw,3.4rem);line-height:1.05;margin:.35rem 0 .7rem}
+.hero p{font-size:1.05rem;color:var(--muted);max-width:58ch}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:1.2px;font-size:.78rem;font-weight:900;color:var(--accent2)}
+.hero-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.illustration{
+  border-radius:26px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,#faf8ff,#eef8ff);
+  position:relative;min-height:300px;overflow:hidden;
+}
+.illus-star{position:absolute;font-size:28px;animation:float 3.8s ease-in-out infinite}
+.illus-star.s1{top:18px;left:24px}
+.illus-star.s2{top:55px;right:28px;animation-delay:.6s}
+.illus-star.s3{bottom:30px;left:35px;animation-delay:1.1s}
+.castle{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);font-size:135px;filter:drop-shadow(0 10px 14px rgba(79,85,140,.22))}
+.illus-bottom{position:absolute;left:16px;right:16px;bottom:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.mini-card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:18px;padding:12px;text-align:center}
+.mini-card strong{display:block;font-size:1.2rem}
+.mini-card span{font-size:.88rem;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.card-tile{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+.card-tile h3{margin:8px 0 5px;font-size:1.1rem}
+.card-tile p{margin:0;color:var(--muted);font-size:.96rem}
+.tile-emoji{font-size:2rem}
+.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.feature{display:flex;gap:12px;align-items:flex-start}
+.feature .icon{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;font-size:1.6rem;background:#f4f2ff}
+.feature strong{display:block}
+.feature small{display:block;color:var(--muted)}
+.section-title{margin:0 0 8px;font-size:1.45rem}
+.small{color:var(--muted)}
+.grid-two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.skill-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.skill-btn{padding:18px;border-radius:22px;border:1px solid var(--line);background:#fff;text-align:left;box-shadow:var(--shadow)}
+.skill-btn:hover{border-color:#c8bcff;background:#fbfaff}
+.skill-btn .big{font-size:1.9rem;display:block;margin-bottom:8px}
+.skill-btn strong{display:block;font-size:1.05rem}
+.skill-btn small{display:block;color:var(--muted);margin-top:5px}
+.skill-btn .rightline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}
+.tag{display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#f3f7ff;border:1px solid var(--line);padding:6px 10px;font-weight:700;font-size:.87rem}
+.game-wrap{max-width:820px;margin:auto}
+.status-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.progress{height:12px;border-radius:999px;background:#eef2ff;border:1px solid var(--line);overflow:hidden}
+.progress > span{display:block;height:100%;background:linear-gradient(90deg,#8f7cff,#4fc3b3);width:0}
+.question-box{text-align:center;padding:28px 18px}
+.question-type{display:inline-block;border-radius:999px;padding:7px 12px;background:#f6f9ff;border:1px solid var(--line);font-weight:800;color:var(--muted)}
+.question{font-size:clamp(3.2rem,10vw,5.8rem);font-weight:900;letter-spacing:-2px;margin:18px 0 14px}
+.answer{max-width:240px;width:100%;height:74px;font-size:2rem;text-align:center;font-weight:900;border-radius:20px;border:2px solid #c9d4ff;background:#fff;color:var(--ink)}
+.hint{font-size:.98rem;color:var(--muted);margin-top:13px}
+.feedback{margin-top:18px;text-align:left;border-radius:20px;padding:18px 18px;background:#effff8;border:1px solid #bfead4}
+.feedback.bad{background:#fff2f5;border-color:#f1bfd0}
+.feedback h3{margin:0 0 8px}
+.feedback p{margin:.35rem 0}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.metric{padding:16px;border-radius:18px;background:#fff;border:1px solid var(--line);text-align:center}
+.metric strong{display:block;font-size:1.5rem}
+.metric span{color:var(--muted);font-size:.92rem}
+.table-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.table-picker{display:flex;flex-wrap:wrap;gap:8px}
+.table-picker button{padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800}
+.table-picker button.active{background:#efeaff;border-color:#cfc2ff;color:var(--accent)}
+.fact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.fact-card{padding:14px;border-radius:18px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);position:relative}
+.fact-card strong{font-size:1.2rem}
+.fact-card .meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;color:var(--muted);font-size:.9rem}
+.mastery{font-weight:900}
+.mastery.good{color:var(--good)}
+.mastery.mid{color:#a8841d}
+.mastery.bad{color:var(--bad)}
+.big-table{overflow:auto;border-radius:20px;border:1px solid var(--line);background:#fff}
+.big-table table{width:100%;border-collapse:collapse;min-width:640px}
+.big-table th,.big-table td{padding:10px 12px;border-bottom:1px solid #edf1ff;border-right:1px solid #edf1ff;text-align:center}
+.big-table th{background:#faf8ff;position:sticky;top:0}
+.big-table td:first-child,.big-table th:first-child{position:sticky;left:0;background:#faf8ff;font-weight:900}
+.big-table td.status-good{background:#ecfff5}
+.big-table td.status-mid{background:#fff8e8}
+.big-table td.status-bad{background:#fff1f4}
+.result-list{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.result-card{padding:16px;border-radius:18px;border:1px solid var(--line);background:#fff}
+.result-card strong{display:block;font-size:1.02rem}
+.result-card .num{font-size:1.55rem;font-weight:900;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:7px 12px;border-radius:999px;background:#f7f4ff;border:1px solid #ddd4ff;font-weight:800}
+.notice{padding:15px 16px;border-radius:18px;background:#f8fbff;border:1px solid var(--line);color:var(--muted)}
+.parent-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.center{text-align:center}
+.footer{text-align:center;color:var(--muted);font-size:.9rem;margin-top:20px}
+.hidden{display:none!important}
+@keyframes float{50%{transform:translateY(-8px)}}
+@media (max-width:950px){
+  .hero,.grid-two,.cards,.quick-grid,.skill-grid,.metrics,.result-list{grid-template-columns:1fr}
+  .fact-grid{grid-template-columns:1fr 1fr}
+}
+@media (max-width:640px){
+  .shell{padding:12px 10px 26px}
+  .panel{padding:16px}
+  .badge-logo{width:48px;height:48px;border-radius:15px;font-size:1.45rem}
+  .hero h2{font-size:2rem}
+  .illustration{min-height:230px}
+  .castle{font-size:92px}
+  .illus-bottom{grid-template-columns:1fr}
+  .fact-grid{grid-template-columns:1fr}
+  .question{letter-spacing:-1px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* V3: Přehlednější dětská grafika */
+.home-grid{display:grid;grid-template-columns:1.55fr .85fr;gap:16px;align-items:stretch}
+.welcome{background:linear-gradient(130deg,rgba(255,255,255,.98),rgba(250,246,255,.95))}
+.welcome h2{font-size:clamp(1.9rem,3.2vw,2.85rem);line-height:1.13;margin:10px 0 12px;max-width:580px}
+.welcome>p{max-width:58ch;color:var(--muted)}
+.softline{height:1px;background:var(--line);margin:22px 0}
+.home-buttons{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.home-buttons button{border:1px solid var(--line);background:#fff;border-radius:21px;padding:14px;text-align:left;box-shadow:0 5px 15px #7985bd19}
+.home-buttons button:hover{background:#f9f7ff;border-color:#beacff}
+.home-buttons span{font-size:1.8rem;display:block}
+.home-buttons strong{display:block;margin-top:3px;font-size:1rem}
+.home-buttons small{display:block;color:var(--muted);margin-top:3px}
+.avatar-panel{text-align:center;background:linear-gradient(160deg,#eff6ff,#f8f1ff)}
+.avatar-panel h3{font-size:1.25rem;margin:3px 0}
+.character-halo{min-height:260px;display:grid;place-items:center;filter:drop-shadow(0 12px 12px #7d6ba834)}
+.character-halo svg{max-width:100%}
+.avatar-choices{display:flex;justify-content:center;gap:10px}
+.avatar-choice{border:2px solid var(--line);background:#fff;font-size:1.6rem;min-width:51px;min-height:51px;border-radius:15px}
+.avatar-choice.selected{background:#ece4ff;border-color:#8063f2}
+.hero-stats{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:17px}
+.hero-stats span{background:#fff;border:1px solid #e0dafa;padding:8px 10px;border-radius:12px;font-size:.86rem;font-weight:800}
+.trophy-rack{display:grid;grid-template-columns:repeat(9,1fr);gap:10px;margin-top:14px}
+.trophy{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:16px;background:#f5f6ff;color:#8f94ad;border:1px dashed #d3d6eb;min-height:92px}
+.trophy.earned{background:linear-gradient(160deg,#fff4cb,#ffe4a0);border:2px solid #ebc257;color:#785415;box-shadow:0 5px 17px #edc36433}
+.trophy-icon{font-size:1.85rem;line-height:1.4}.trophy strong{font-size:.95rem}
+.split-head{display:flex;justify-content:space-between;gap:15px;align-items:center}
+.crown{font-size:3.7rem;filter:grayscale(1);opacity:.45}
+.crown.earned{filter:none;opacity:1}
+.skill-grid{margin-top:20px}
+.skill-btn.highlighted{background:#effcf7;border:2px solid #8cdfc8}
+.skill-btn .tag{margin-top:12px}
+.fact-grid{margin-top:20px}.fact-card small{display:block;color:var(--muted);margin:5px 0 11px}
+.fact-card.good{background:#eafff4}.fact-card.mid{background:#fff9e8}.fact-card.bad{background:#fff1f5}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0;color:var(--muted);font-size:.91rem}
+.big-table td.cell-good{background:#e7fff1}.big-table td.cell-mid{background:#fff7db}.big-table td.cell-bad{background:#fff0f4}
+.game-wrap{max-width:920px;margin:auto}
+.question-layout{display:grid;grid-template-columns:180px 1fr;align-items:center;gap:10px}
+.question-avatar{text-align:center}.question-avatar svg{max-width:100%;height:auto}
+.bubble{margin:0 auto;max-width:170px;background:#f3f0ff;border:1px solid #e2d9ff;padding:9px;border-radius:13px;font-size:.89rem}
+.question-box{padding:32px 14px}
+.question-kind{display:inline-flex;background:#f5f1ff;padding:8px 12px;border-radius:999px;font-size:.9rem;font-weight:800;color:#654fd0}
+.question .qmark{color:#7357d9}
+.answer-label{display:block;font-weight:700;margin-bottom:9px;color:var(--muted)}
+.answer-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.calculation{background:#fff;border:1px solid #e4cbd1;border-radius:14px;padding:13px 15px;margin:12px 0;text-align:left}
+.calculation p{margin:7px 0 0}
+.feedback .answer-actions{justify-content:flex-start}
+.summary{max-width:800px;margin:auto;padding:30px}
+.summary .big-emoji,.gate .big-emoji{font-size:4rem}
+.summary h2{font-size:2rem;margin:10px 0}
+.reward-box{background:linear-gradient(135deg,#fff7d7,#fff0af);border:2px solid #f3d377;padding:17px;border-radius:18px;margin:14px 0;color:#70521f}
+.reward-box>span{font-size:1.25rem;font-weight:900}
+.reward-box p{margin:5px 0 0}
+.celebration{background:radial-gradient(circle at 12% 12%,#fff4b2,transparent 30%),radial-gradient(circle at 95% 25%,#d9f6e3,transparent 35%),#fff}
+.center-actions{justify-content:center}
+.gate{max-width:550px;margin:25px auto;text-align:center}
+.gate h2{font-size:2rem;margin:8px 0}
+#parent-pin-form{display:flex;flex-direction:column;gap:11px;margin:20px auto 0;max-width:320px}
+#parent-pin-form label{text-align:left;font-weight:800}
+.parent-pin{height:56px;border-radius:14px;border:2px solid #d6dbef;padding:0 14px;background:#fff;font-size:1.3rem;letter-spacing:3px}
+.pin-error{color:#ae3154;font-weight:800}
+@media(max-width:900px){.home-grid{grid-template-columns:1fr}.trophy-rack{grid-template-columns:repeat(5,1fr)}.character-halo{min-height:150px}}
+@media(max-width:570px){.home-buttons{grid-template-columns:1fr 1fr}.home-buttons strong{font-size:.91rem}.trophy-rack{grid-template-columns:repeat(3,1fr)}.question-layout{grid-template-columns:1fr}.question-avatar{display:none}.question-box{padding:18px 6px}.welcome h2{font-size:1.95rem}.hero-buttons .btn{width:100%}}
+@media(prefers-reduced-motion:reduce){.trophy,.avatar-panel{animation:none!important}}
+
+
+/* Denní úkol V5 */
+.daily-banner{background:linear-gradient(120deg,#e9fff3,#edf2ff);border:1px solid #bcdccf;border-radius:20px;padding:17px 19px;margin:14px 0}
+.daily-banner h3{margin:0 0 5px;font-size:1.2rem}
+.daily-banner p{margin:0 0 12px;color:#526480}
+.daily-stages{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}
+.daily-stage{padding:14px 11px;border:1px solid var(--line);border-radius:16px;background:#fff;text-align:center}
+.daily-stage .stage-emoji{font-size:1.65rem;display:block}
+.daily-stage strong{display:block;margin:4px 0 2px}
+.daily-stage small{color:var(--muted)}
+.daily-status{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:10px 0;font-weight:750}
+.daily-status .tag{background:#f1ebff}
+.daily-clock{font-weight:850;color:#6954c8}
+.daily-history{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin:12px 0}
+.daily-day{border:1px solid var(--line);background:#fafbff;border-radius:14px;padding:12px 4px;text-align:center}
+.daily-day.done{background:#e9fff2;border-color:#9ed5b6}
+.daily-day strong{display:block;font-size:.91rem}.daily-day span{display:block;font-size:1.55rem}
+@media(max-width:850px){.daily-stages{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.daily-stages{grid-template-columns:1fr 1fr}.daily-history{gap:4px}.daily-day{padding:7px 2px}.daily-day strong{font-size:.73rem}}
+
+/* Nové školní moduly */
+.range-option{display:inline-flex;align-items:center;gap:7px;margin:8px 18px 0 0;color:var(--ink);font-weight:700}
+.range-option input{accent-color:var(--accent);width:18px;height:18px}
+.compare-line{display:flex;justify-content:center;align-items:center;gap:28px;font-size:clamp(2.2rem,5vw,4rem);font-weight:900;margin:12px 0}
+.compare-line span{color:var(--accent)}
+.compare-buttons{display:flex;gap:14px;justify-content:center}
+.compare-buttons button{min-width:80px;min-height:70px;font-size:2.1rem}
+.column-work{display:grid;grid-template-columns:minmax(140px,.45fr) minmax(320px,1.55fr);align-items:start;gap:24px;margin-top:17px;text-align:left}
+.vertical-task{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;text-align:right;font-size:clamp(1.9rem,4vw,3.1rem);font-weight:900;background:#f7f5ff;border-radius:20px;padding:18px 28px;max-width:260px;width:100%;margin:0 auto}
+.line-two{display:flex;justify-content:space-between}
+.stroke{border-top:4px solid #6860ac;margin:7px 0 4px}
+.empty-final{color:#9983e7}
+.written-form{display:flex;flex-direction:column;gap:12px}
+.written-form p{margin:0 0 4px}
+.step-row{display:flex;justify-content:space-between;align-items:center;gap:12px;background:#f9fbff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;font-weight:700}
+.step-row label{flex:1}
+.step-row input{width:110px;min-height:51px;border-radius:11px;border:2px solid #c9d4ff;text-align:center;color:var(--ink);background:#fff;font-size:1.35rem;font-weight:850}
+.step-row.final-row{background:#effaf5;border-color:#bee8d7}
+.step-row.final-row input{border-color:#71c4ac}
+@media(max-width:750px){.column-work{grid-template-columns:1fr}.vertical-task{font-size:2.3rem}.step-row{flex-wrap:wrap}.step-row input{width:100%}}
+
+/* Písemné počítání jako ve škole */
+.real-column-form{max-width:650px;margin:10px auto;text-align:left}
+.column-paper{width:max-content;max-width:100%;margin:15px auto;padding:19px 22px;background:#fffefa;border:2px solid #e4e0d9;border-radius:16px;box-shadow:0 8px 20px #50487514}
+.digit-row{display:grid;grid-template-columns:36px repeat(var(--columns,3),50px);gap:5px;align-items:center;justify-content:end;font:800 2rem/1.35 ui-monospace,SFMono-Regular,Consolas,monospace}
+.digit-row .digit-box{text-align:center}
+.digit-row .math-prefix{color:var(--accent);text-align:center}
+.column-underline{height:3px;background:#58538c;margin:5px 0 9px 36px}
+.digit-row input{width:50px;height:56px;text-align:center;font:800 1.7rem/1 ui-monospace,SFMono-Regular,Consolas,monospace;border:2px solid #a8addd;border-radius:11px;background:#f7f5ff;color:var(--ink)}
+.carry-list{display:grid;gap:7px;max-width:520px;margin:12px auto}
+.carry-choice{padding:9px 12px;border:1px solid var(--line);background:#f8f9ff;border-radius:12px;display:flex;align-items:center;gap:9px;font-weight:700}
+.carry-choice input{width:22px;height:22px;accent-color:var(--accent)}
+@media(max-width:580px){.column-paper{padding:13px 7px}.digit-row{grid-template-columns:24px repeat(var(--columns,3),41px);gap:3px;font-size:1.7rem}.digit-row input{width:41px;height:48px}.column-underline{margin-left:24px}}
+/* Rodičovská analytika: přehledná, nezahlcující a čitelná. */
+.parent-report{display:grid;gap:18px;margin-top:20px}
+.report-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.report-card{border:1px solid var(--line);background:#fff;border-radius:19px;padding:18px}
+.report-card h3{font-size:1.14rem;margin:0 0 12px}
+.report-columns{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.report-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.report-kpi{border:1px solid var(--line);border-radius:16px;background:#f8faff;padding:14px}
+.report-kpi .figure{font-weight:900;font-size:1.55rem;display:block}
+.report-kpi small{display:block;color:var(--muted)}
+.report-list{display:grid;gap:9px;margin:9px 0}
+.report-item{padding:13px 14px;border-radius:14px;background:#f8faff;border:1px solid var(--line)}
+.report-item strong{display:block;margin:0 0 4px}
+.report-item p{margin:0;color:var(--muted);font-size:.93rem}
+.report-item.good{background:#effcf5;border-color:#bee5cb}
+.report-item.attention{background:#fff7ee;border-color:#f5d9b7}
+.report-item.neutral{background:#f7f6ff}
+.skill-report-list{display:grid;gap:11px}
+.skill-report{border:1px solid var(--line);border-radius:15px;padding:12px 14px}
+.skill-report-top{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.skill-report-top strong{font-size:.99rem}
+.skill-report-top small{color:var(--muted)}
+.skill-report .progress{height:9px;margin:7px 0 4px}
+.skill-report .progress>span{background:linear-gradient(90deg,#7960eb,#57c6b5)}
+.status-tag{padding:4px 9px;border-radius:99px;background:#f3f1ff;font-weight:800;font-size:.84rem}
+.status-tag.good{background:#e4f8ea;color:#20754a}
+.status-tag.attention{background:#fff1db;color:#986018}
+.status-tag.not-enough{background:#edf2fa;color:#65738d}
+.report-subtle{color:var(--muted);font-size:.91rem;margin:8px 0 0}
+.report-history{display:grid;gap:8px}
+.report-history-row{display:grid;grid-template-columns:110px 1fr 82px 72px;gap:9px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.report-history-row>span{font-size:.9rem}
+.report-track{height:11px;border-radius:99px;background:#edf0f7;overflow:hidden}
+.report-track span{display:block;height:100%;background:linear-gradient(90deg,#8f7cff,#4fc3b3)}
+.wrong-examples{display:grid;gap:9px}
+.wrong-example{padding:12px 13px;border:1px solid #f3dcd1;border-radius:13px;background:#fff9f4}
+.wrong-example strong{display:block;margin-bottom:3px}
+.wrong-example small{display:block;color:var(--muted)}
+.reco-plan{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:10px 0}
+.reco-step{background:#f5f7ff;border:1px solid var(--line);padding:13px;border-radius:15px}
+.reco-step .time{color:#6e55c9;font-weight:900;font-size:1.04rem}
+.reco-step strong{display:block;margin:4px 0}
+.reco-step small{color:var(--muted)}
+@media(max-width:800px){.report-columns,.reco-plan{grid-template-columns:1fr}.report-kpis{grid-template-columns:1fr 1fr}}
+@media(max-width:530px){.report-kpis{grid-template-columns:1fr}.report-history-row{grid-template-columns:85px 1fr 65px;gap:5px}.report-history-row .history-time{display:none}.report-card{padding:14px}}
+
+
+.voice-assist{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:10px 0 17px}
+.mark-report{max-width:720px;margin:16px auto;text-align:left}
+.mark-card{display:flex;gap:16px;align-items:center;padding:18px;margin-bottom:12px;border:1px solid #cad8ff;border-radius:20px;background:#f5f7ff}
+.mark-number{font-size:4rem;line-height:1;font-weight:1000;color:#6f57dd;min-width:60px}
+.mark-card strong{font-size:1.15rem}
+.mark-card p{margin:.3rem 0;color:#64718e}
+.error-list{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.error-card{background:#fff9fb;border:1px solid #f3cddd;border-radius:15px;padding:12px}
+.error-card p{margin:5px 0;color:#66728f;font-size:.91rem}
+@media(max-width:600px){.error-list{grid-template-columns:1fr}}
+
+/* Tabletová úprava ovládání */
+@media(max-width:1100px){
+ .nav{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;padding-bottom:10px}
+ .nav button{flex:none;white-space:nowrap;min-height:48px}
+ .topbar{align-items:flex-start}
+ .top-actions button{min-height:44px}
+}
+@media(max-width:760px){
+ .btn{min-height:46px}
+ .skill-btn{min-height:120px}
+ input,select{font-size:16px}
+ .shell{padding:12px 10px 35px}
+}
+.pwa-update{position:sticky;z-index:10;top:0;margin:0 0 12px;padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;background:#e6fff7;border:2px solid #71c9a5;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,.09)}
+.pwa-update[hidden]{display:none}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <div class="badge-logo">🧠</div>
+      <div>
+        <h1>Charlotte – Matematická akademie</h1>
+        <p>Počítání může být radost. ✨</p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <a href="../" class="btn secondary tiny" style="text-decoration:none;display:inline-flex;align-items:center">← Šájina akademie</a>
+      <div class="pill" id="level-pill">⭐ Úroveň 1</div><button class="btn secondary tiny" id="sound-toggle" type="button">🔊 Zvuk zapnutý</button>
+      <button class="btn secondary tiny" type="button" id="voice-toggle">🗣️ Česká učitelka</button><button class="btn secondary tiny" type="button" id="voice-demo">🔊 Vyzkoušet hlas</button><button class="btn secondary tiny" type="button" id="parent-button">👨‍👩‍👧 Pro rodiče</button>
+    </div>
+  </header>
+
+  <nav class="nav" id="nav">
+    <button type="button" data-view="home" class="active">🏠 Domů</button>
+    <button type="button" data-view="daily">📅 Denní úkol</button>
+    <button type="button" data-view="practice">🧮 Procvičování</button>
+    <button type="button" data-view="tablePractice">✖️ Jen násobilka</button>
+    <button type="button" data-view="tableOverview">📋 Tabulka 1×1</button>
+    <button type="button" data-view="school">📚 Školní učivo</button>
+    <button type="button" data-view="schoolTest">📝 Školní test</button>
+    <button type="button" data-view="progress">🏆 Výsledky</button>
+  </nav>
+
+  <aside id="pwa-update" class="pwa-update" hidden role="status">
+    <span>✨ Nová verze akademie je připravená.</span>
+    <button type="button" id="pwa-update-now" class="btn mint tiny">Aktualizovat</button>
+  </aside>
+  <main id="main" aria-live="polite"></main>
+  <div class="footer">Po prvním otevření přes internet funguje akademie i offline. Výsledky zůstávají v tomto tabletu. Zálohu můžeš vytvořit v části Pro rodiče.</div>
+</div>
+
+<script>
+'use strict';
+const STORAGE_KEY = 'charlotte-matematicka-akademie-v11';
+const PARENT_CODE_HASH = '66fecff15de0bc83d8a227497664db47fd7a0d4a1c5ecccd2e85e9e82425bc3b'; // PIN se neposílá na server; nejde o bezpečné přihlašování.
+const SKILLS = {
+  easy:{name:'Lehčí násobilka',emoji:'🌼',desc:'Násobení čísly 1 až 5'},
+  hard:{name:'Těžší násobilka',emoji:'🚀',desc:'Násobení čísly 6 až 9'},
+  add:{name:'Sčítání',emoji:'➕',desc:'Počítání do 100'},
+  sub:{name:'Odčítání',emoji:'➖',desc:'Počítání do 100'},
+  division:{name:'Dělení',emoji:'➗',desc:'Dělení podle malé násobilky'},
+  compare:{name:'Větší, menší, rovná se',emoji:'⚖️',desc:'Porovnávání čísel do 1 000'},
+  written:{name:'Písemné počítání',emoji:'✍️',desc:'Pod sebou s přenosem jedničky'},
+  decomposition:{name:'Rozklad čísla',emoji:'🧩',desc:'Po stovkách, desítkách a jednotkách'},
+  hundreds:{name:'Počítání do 1 000',emoji:'🔢',desc:'Sčítání a odčítání do 1 000'}
+};
+const skillOrder = Object.keys(SKILLS);
+const $ = s => document.querySelector(s);
+const rand = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+const niceDate = iso => {try{return new Date(iso).toLocaleDateString('cs-CZ');}catch(e){return '—';}};
+const AVATARS = {
+  kouzelnice:{name:'Kouzelnice',emoji:'🧙‍♀️',body:'#9269db',hat:'#7455ce'},
+  pruzkumnice:{name:'Průzkumnice',emoji:'🧭',body:'#e89966',hat:'#5c9cb1'},
+  hvezdarka:{name:'Hvězdářka',emoji:'🌟',body:'#4fb4a5',hat:'#4a82d6'}
+};
+function initial(){return {xp:0,sessions:[],diagnosticDone:false,skills:Object.fromEntries(skillOrder.map(k=>[k,{yes:0,no:0}])),facts:{},badges:{},allNine:false,daily:{active:null,completed:{}},settings:{sound:true,voice:true,avatar:'kouzelnice',tableSelection:'mix',schoolRange:1000}};}
+function sanitise(input){
+  const out=initial();
+  if(!input || typeof input!=='object' || Array.isArray(input)) return out;
+  out.xp= Math.max(0,Math.min(1000000,Number(input.xp)||0));
+  if(Array.isArray(input.sessions)) out.sessions=input.sessions.slice(-3000).filter(s=>s && typeof s==='object');
+  out.diagnosticDone=Boolean(input.diagnosticDone);
+  if(input.skills && typeof input.skills==='object') skillOrder.forEach(k=>{
+    const s=input.skills[k];
+    if(s){out.skills[k]={yes:Math.max(0,+s.yes||0),no:Math.max(0,+s.no||0)};}
+  });
+  if(input.facts && typeof input.facts==='object'){
+    for(const [key,val] of Object.entries(input.facts)){
+      if(/^(10|[1-9])x(10|[1-9])$/.test(key) && val && typeof val==='object'){
+        out.facts[key]={yes:Math.max(0,+val.yes||0),no:Math.max(0,+val.no||0),streak:Math.max(0,+val.streak||0)};
+      }
+    }
+  }
+  if(input.badges && typeof input.badges==='object'){
+    for(let i=1;i<=10;i++) if(input.badges[i]) out.badges[i]=String(input.badges[i]).slice(0,40);
+    if(input.badges.mix) out.badges.mix=String(input.badges.mix).slice(0,40);
+  }
+  out.allNine=!!input.allNine;
+  if(input.daily && typeof input.daily==='object' && !Array.isArray(input.daily)){
+    const completed=input.daily.completed;
+    if(completed && typeof completed==='object' && !Array.isArray(completed)){
+      for(const [key,item] of Object.entries(completed).slice(-500)){
+        if(/^\d{4}-\d{2}-\d{2}$/.test(key) && item && typeof item==='object'){
+          out.daily.completed[key]={yes:Math.max(0,Number(item.yes)||0),total:Math.max(0,Number(item.total)||0),elapsedMs:Math.max(0,Number(item.elapsedMs)||0),date:typeof item.date==='string'?item.date:''};
+        }
+      }
+    }
+    const active=input.daily.active;
+    if(active && typeof active==='object' && active.game && active.game.mode==='daily' && Array.isArray(active.game.questions) && active.game.questions.length>0 && active.game.questions.length<=100 && Number.isInteger(active.game.index) && active.game.index>=0 && active.game.index<active.game.questions.length && typeof active.dateKey==='string'){
+      out.daily.active={dateKey:active.dateKey,game:active.game,feedback:active.feedback||null};
+    }
+  }
+  const settings = input.settings || input.meta || {};
+  out.settings.sound = settings.sound !== false;
+  out.settings.voice = settings.voice !== false;
+  out.settings.avatar = AVATARS[settings.avatar] ? settings.avatar : 'kouzelnice';
+  out.settings.tableSelection = /^(mix|10|[1-9])$/.test(settings.tableSelection||'')?settings.tableSelection:'mix';
+  out.settings.schoolRange = Number(settings.schoolRange)===10000?10000:1000;
+  return out;
+}
+function load(){
+  for(const key of [STORAGE_KEY,'charlotte-matematicka-akademie-v10','charlotte-matematicka-akademie-v9','charlotte-matematicka-akademie-v8','charlotte-matematicka-akademie-v7','charlotte-matematicka-akademie-v6','charlotte-matematicka-akademie-v5','charlotte-matematicka-akademie-v4','charlotte-matematicka-akademie-v3','charlotte-matematicka-akademie-v2','charlotte-matematicka-akademie-v1']){
+    try{const x=JSON.parse(localStorage.getItem(key));if(x && x.sessions && x.skills && x.facts) return sanitise(x);}catch(e){}
+  }
+  return initial();
+}
+let data=load();
+let view='home';
+let game=null;
+let feedback=null;
+let selectedTable=data.settings.tableSelection;
+let soundOn=data.settings.sound;
+let parentUnlocked=false;
+let pinError=false;
+let audioCtx=null;
+let storageError=false;
+let lastSummary=null;
+let schoolRange=data.settings.schoolRange||1000;
+let schoolMode="written";
+let dailyClockAnchor=null;
+let lastDailySave=0;
+const DAILY_BLOCKS=[
+ {id:'multiply',label:'Násobilka',emoji:'✖️',count:12,minutes:4},
+ {id:'division',label:'Dělení',emoji:'➗',count:8,minutes:3},
+ {id:'compare',label:'Porovnávání',emoji:'⚖️',count:6,minutes:2},
+ {id:'hundreds',label:'Do 1 000',emoji:'🔢',count:8,minutes:5},
+ {id:'written',label:'Písemné počítání',emoji:'✍️',count:4,minutes:6}
+];
+function dateKey(date=new Date()){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+function dailyCompleted(){return data.daily.completed[dateKey()]||null;}
+function hasDailyActive(){return Boolean(data.daily.active && data.daily.active.dateKey===dateKey() && !dailyCompleted());}
+function minutesText(ms){const s=Math.max(0,Math.floor((Number(ms)||0)/1000));return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;}
+function syncDailyClock(){
+  if(!game || game.mode!=='daily') {dailyClockAnchor=null;return;}
+  if(view!=='game' || document.hidden){dailyClockAnchor=null;return;}
+  const now=Date.now();
+  if(dailyClockAnchor!==null) game.elapsedMs=(game.elapsedMs||0)+Math.max(0,Math.min(now-dailyClockAnchor,4000));
+  dailyClockAnchor=now;
+}
+function saveDailySnapshot(){
+  if(game && game.mode==='daily'){
+    syncDailyClock();
+    data.daily.active={dateKey:game.dayKey,game:JSON.parse(JSON.stringify(game)),feedback:feedback?JSON.parse(JSON.stringify(feedback)):null};
+    save();
+  }
+}
+function dailyTimerTick(){
+  if(!game||game.mode!=='daily'||view!=='game'){dailyClockAnchor=null;return;}
+  syncDailyClock();
+  const clock=$('#daily-clock');if(clock)clock.textContent=minutesText(game.elapsedMs);
+  if(Date.now()-lastDailySave>10000){lastDailySave=Date.now();saveDailySnapshot();}
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden && game?.mode==='daily'){syncDailyClock();saveDailySnapshot();dailyClockAnchor=null;}else if(game?.mode==='daily'){dailyClockAnchor=null;}});
+setInterval(dailyTimerTick,1000);
+window.addEventListener('pagehide',()=>{if(game?.mode==='daily')saveDailySnapshot();});
+
+function save(){
+  data.settings.tableSelection=selectedTable;
+  data.settings.sound=soundOn;
+  data.settings.voice=data.settings.voice!==false;
+  data.settings.schoolRange=schoolRange;
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data));storageError=false;}catch(e){storageError=true;}
+}
+// V hlasu NIKDY neposíláme „4 × 10 = 40“ ani samotné číslice.
+// Některé české syntetické hlasy totiž zkrácený zápis čtou jako pořadovou číslovku.
+const CS_UNITS=['nula','jedna','dva','tři','čtyři','pět','šest','sedm','osm','devět'];
+const CS_TEENS=['deset','jedenáct','dvanáct','třináct','čtrnáct','patnáct','šestnáct','sedmnáct','osmnáct','devatenáct'];
+const CS_TENS=['','','dvacet','třicet','čtyřicet','padesát','šedesát','sedmdesát','osmdesát','devadesát'];
+const CS_HUNDREDS=['','sto','dvě stě','tři sta','čtyři sta','pět set','šest set','sedm set','osm set','devět set'];
+const CS_TIMES=['','jednou','dvakrát','třikrát','čtyřikrát','pětkrát','šestkrát','sedmkrát','osmkrát','devětkrát','desetkrát'];
+function spokenNumber(value){
+  let n=Number(value);
+  if(!Number.isInteger(n))return String(value);
+  if(n<0)return 'mínus '+spokenNumber(-n);
+  if(n<10)return CS_UNITS[n];
+  if(n<20)return CS_TEENS[n-10];
+  if(n<100)return CS_TENS[Math.floor(n/10)]+(n%10?' '+CS_UNITS[n%10]:'');
+  if(n<1000)return CS_HUNDREDS[Math.floor(n/100)]+(n%100?' '+spokenNumber(n%100):'');
+  if(n<100000){
+    const thousands=Math.floor(n/1000),r=n%1000;
+    let part;
+    if(thousands===1)part='tisíc';
+    else if(thousands<5)part=spokenNumber(thousands)+' tisíce';
+    else part=spokenNumber(thousands)+' tisíc';
+    return part+(r?' '+spokenNumber(r):'');
+  }
+  return String(n);
+}
+function spokenTimes(a,b){
+  const times=CS_TIMES[Number(a)]||spokenNumber(a)+' krát';
+  return times+' '+spokenNumber(b);
+}
+function spokenExpression(q){
+  if(q.kind==='mult')return spokenTimes(q.a,q.b);
+  if(q.kind==='div')return spokenNumber(q.a)+' děleno '+spokenNumber(q.b);
+  const plus=q.kind==='add'||(q.kind==='column'||q.kind==='written')&&q.operation==='add';
+  return spokenNumber(q.a)+(plus?' plus ':' mínus ')+spokenNumber(q.b);
+}
+function spokenExplanation(q){
+  if(q.kind==='mult'){
+    if(q.a===10||q.b===10)return 'Při násobení deseti stačí za číslo přidat nulu. '+spokenExpression(q)+' je '+spokenNumber(q.value)+'.';
+    if(q.b===1)return 'Násobení jedničkou číslo nezmění. Výsledek je '+spokenNumber(q.value)+'.';
+    if(q.b<=5)return 'Zkus '+spokenNumber(q.a)+' sečíst '+spokenNumber(q.b)+'krát. Vyjde '+spokenNumber(q.value)+'.';
+    const five=q.a*5,remaining=q.b-5,rest=q.a*remaining;
+    return spokenTimes(q.a,5)+' je '+spokenNumber(five)+'. '+spokenTimes(q.a,remaining)+' je '+spokenNumber(rest)+'. '+spokenNumber(five)+' plus '+spokenNumber(rest)+' je '+spokenNumber(q.value)+'.';
+  }
+  if(q.kind==='div')return 'Dělení si ověříš násobením. '+spokenTimes(q.b,q.value)+' je '+spokenNumber(q.a)+'.';
+  if(q.kind==='compare'){
+    const relation=q.value==='<'?'menší než':q.value==='>'?'větší než':'stejné jako';
+    return spokenNumber(q.a)+' je '+relation+' '+spokenNumber(q.b)+'. Porovnej nejdřív stovky, potom desítky a jednotky.';
+  }
+  if(q.kind==='column')return q.columns.map((c,i)=>{
+    const columns=['jednotky','desítky','stovky','tisíce'];
+    if(q.operation==='sub')return columns[i]+'. '+spokenNumber(c.lower)+' plus '+spokenNumber(c.digit)+' je '+spokenNumber(c.target)+'. Zapíšeme '+spokenNumber(c.digit)+(c.carryOut?' a jedničku si podržíme.':'.');
+    return columns[i]+'. '+spokenNumber(c.top)+' plus '+spokenNumber(c.bottom)+(c.carryIn?' plus jedna':'')+' je '+spokenNumber(c.sum)+'. Zapíšeme '+spokenNumber(c.digit)+(c.carryOut?' a jedničku si podržíme.':'.');
+  }).join(' ');
+  if(q.kind==='written')return q.parts.map((part,i)=>{
+    const start=i===0?q.a:q.steps[i-1];
+    const result=q.steps[i];
+    return spokenNumber(start)+(q.operation==='add'?' plus ':' mínus ')+spokenNumber(part)+' je '+spokenNumber(result)+'.';
+  }).join(' ');
+  if(q.kind==='add'||q.kind==='sub'){
+    const tens=Math.floor(q.b/10)*10,units=q.b%10,sign=q.kind==='add'?' plus ':' mínus ',mid=q.kind==='add'?q.a+tens:q.a-tens;
+    return spokenNumber(q.a)+sign+spokenNumber(tens)+' je '+spokenNumber(mid)+'. '+spokenNumber(mid)+sign+spokenNumber(units)+' je '+spokenNumber(q.value)+'.';
+  }
+  return 'Správný výsledek je '+spokenNumber(q.value)+'.';
+}
+function csVoice(){
+  if(!('speechSynthesis' in window))return null;
+  return speechSynthesis.getVoices().find(v=>String(v.lang).toLowerCase().startsWith('cs'))||null;
+}
+function speak(text,force=false){
+  if(!data.settings.voice && !force)return;
+  if(!('speechSynthesis' in window))return;
+  const voice=csVoice();
+  // Nepouštěj češtinu anglickým hlasem; nápověda zůstává čitelná na obrazovce.
+  if(!voice)return;
+  try{
+    speechSynthesis.cancel();
+    const msg=new SpeechSynthesisUtterance(text);
+    msg.voice=voice;msg.lang='cs-CZ';msg.rate=1.12;msg.pitch=1.02;msg.volume=.95;
+    speechSynthesis.speak(msg);
+  }catch(e){}
+}
+function voiceQuestion(){
+  if(!game)return;
+  const q=game.questions[game.index];
+  if(q.kind==='compare')return speak('Šájo, porovnej '+spokenNumber(q.a)+' a '+spokenNumber(q.b)+'. Co je větší, menší, nebo jsou stejná?',true);
+  speak('Šájo, '+(q.kind==='column'?'vypočítej písemně ':'kolik je ')+spokenExpression(q)+'?',true);
+}
+function spokenMistake(q){
+  const given=feedback?.guess;
+  if(q.kind==='compare'){
+    const label={'>':'větší než','<':'menší než','=':'rovná se'};
+    return 'Vybrala jsi '+(label[given]||'jiné znaménko')+'.';
+  }
+  if(q.kind==='column' && feedback?.columnValues){
+    const places=['jednotky','desítky','stovky','tisíce'];
+    for(let i=0;i<q.columns.length;i++){
+      const c=q.columns[i];
+      if(feedback.columnValues[i]!==c.digit)return 'Ve sloupci '+places[i]+' máš '+spokenNumber(feedback.columnValues[i])+', správně je '+spokenNumber(c.digit)+'.';
+      if(i<q.columns.length-1 && feedback.columnCarries[i]!==c.carryOut){
+        return c.carryOut?'U sloupce '+places[i]+' sis nezapamatovala jedničku.':'U sloupce '+places[i]+' jsi si zapamatovala jedničku navíc.';
+      }
+    }
+  }
+  if(q.kind==='written' && feedback?.writtenValues){
+    for(let i=0;i<q.steps.length;i++){
+      const actual=feedback.writtenValues[i];
+      if(actual!==q.steps[i])return 'V kroku číslo '+spokenNumber(i+1)+' ti vyšlo '+spokenNumber(actual)+', ale správně je '+spokenNumber(q.steps[i])+'.';
+    }
+  }
+  if(given!==undefined && /^-?\d+$/.test(String(given)))return 'Napsala jsi '+spokenNumber(Number(given))+'. Správně je '+spokenNumber(q.value)+'.';
+  return '';
+}
+let praiseIndex=0;
+function voiceAnswer(q,correct){
+  // Školní test je bez průběžné zpětné vazby, aby neprozradil správné řešení.
+  if(game?.mode==='schoolTest')return;
+  if(correct){
+    // Krátká, přirozená pochvala. Výsledek znovu nečteme.
+    const praise=praiseIndex++%2===0?'Výborně, Šájo!':'Správně, Šájo!';
+    speak(praise);
+    return;
+  }
+  // Pojmenuj konkrétní chybu, potom vysvětli školní postup výpočtu.
+  const detail=spokenMistake(q);
+  const help=spokenExplanation(q);
+  speak('Tohle bylo špatně, Šájo. '+(detail?detail+' ':'')+help);
+}
+function playSound(which){
+  if(!soundOn) return;
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(!AC) return;
+    if(!audioCtx) audioCtx=new AC();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    const tones=which==='correct' ? [[660,0,.1],[880,.12,.14]] : which==='reward' ? [[523,0,.12],[659,.14,.12],[784,.28,.19],[1047,.5,.25]] : [[320,0,.14],[265,.15,.16]];
+    const now=audioCtx.currentTime;
+    for(const [hz,offset,duration] of tones){
+      const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+      osc.type='sine';osc.frequency.value=hz;
+      gain.gain.setValueAtTime(.0001,now+offset);
+      gain.gain.exponentialRampToValueAtTime(.065,now+offset+.015);
+      gain.gain.exponentialRampToValueAtTime(.0001,now+offset+duration);
+      osc.connect(gain);gain.connect(audioCtx.destination);
+      osc.start(now+offset);osc.stop(now+offset+duration+.025);
+    }
+  }catch(e){/* Some browsers disable sound for file pages. */}
+}
+function factKey(a,b){return `${Math.min(a,b)}x${Math.max(a,b)}`;}
+function factStats(a,b){return data.facts[factKey(a,b)]||{yes:0,no:0,streak:0};}
+function totalAnswers(){return skillOrder.reduce((s,id)=>s+data.skills[id].yes+data.skills[id].no,0);}
+function totalCorrect(){return skillOrder.reduce((s,id)=>s+data.skills[id].yes,0);}
+function level(){return 1+Math.floor(data.xp/150);}
+function acc(yes,no){return yes+no ? Math.round(yes/(yes+no)*100):null;}
+function skillAccuracy(id){const s=data.skills[id];return acc(s.yes,s.no);}
+function rowAccuracy(n){let y=0,no=0;for(let i=1;i<=10;i++){const f=factStats(n,i);y+=f.yes;no+=f.no;}return acc(y,no);}
+function masteryStatus(a,b){const f=factStats(a,b);if(f.yes+f.no===0)return 'untested';if(f.streak>=2)return 'good';if(f.no>0 && f.yes<=f.no)return 'bad';return 'mid';}
+function skillStatusText(id){const x=skillAccuracy(id);return x===null?'Ještě netrénováno':`${x} % správně`;}
+function makeMult(a,b){return {kind:'mult',a,b,value:a*b,skill:Math.max(a,b)<=5?'easy':'hard',key:factKey(a,b)};}
+function makeAdd(){let a=rand(12,59),b=rand(8,Math.min(99-a,35));return {kind:'add',a,b,value:a+b,skill:'add'};}
+function makeSub(){let a=rand(35,99),b=rand(8,a-5);return {kind:'sub',a,b,value:a-b,skill:'sub'};}
+function factBank(){const out=[];for(let a=1;a<=10;a++)for(let b=1;b<=10;b++)out.push(makeMult(a,b));return out;}
+function makeDivide(){
+  const b=rand(2,10),answer=rand(2,10);
+  return {kind:'div',a:b*answer,b,value:answer,skill:'division'};
+}
+function makeCompare(limit=1000){
+  const a=rand(10,limit),equal=rand(1,7)===1;
+  const range=limit===1000?130:1200;
+  let b=equal?a:Math.max(10,Math.min(limit,a+rand(-range,range)));
+  if(!equal&&a===b)b=Math.min(limit,a+1);
+  return {kind:'compare',a,b,value:a===b?'=':a>b?'>':'<',skill:'compare'};
+}
+function makeHundreds(limit=1000){
+  const add=rand(0,1)===1;
+  let a,b;
+  if(add){a=rand(100,Math.floor(limit*.65));b=rand(35,Math.min(899,limit-a));}
+  else{a=rand(200,Math.min(limit,9999));b=rand(20,a-5);}
+  return {kind:add?'add':'sub',a,b,value:add?a+b:a-b,skill:'hundreds'};
+}
+function makeDecomposition(limit=1000){
+  // Při rozkladu používáme maximálně 3ciferné druhé číslo,
+  // aby dvě mezifáze odpovídaly stovkám a desítkám také v rozšíření do 10 000.
+  const add=rand(0,1)===1;
+  const a=rand(300,limit===1000?950:9900);
+  const b=rand(40,Math.min(950,add?limit-a:a-10));
+  const q={kind:'written',skill:'decomposition',a,b,operation:add?'add':'sub',value:add?a+b:a-b};
+  // 2 mezivýsledky po stovkách a desítkách; poslední = správný výsledek
+  const hundreds=Math.floor(q.b/100)*100;
+  const tens=Math.floor((q.b%100)/10)*10;
+  const sign=q.operation==='add'?1:-1;
+  q.steps=[q.a+sign*hundreds,q.a+sign*(hundreds+tens),q.value];
+  q.parts=[hundreds,tens,q.b%10];
+  return q;
+}
+
+
+// Písemné počítání po jednotlivých sloupcích – bez odčítání po stovkách.
+// Odčítání doplňováním: 5 a kolik je do 14? 9; jedničku přidám k dolním desítkám.
+function columnSteps(a,b,operation){
+  const width=Math.max(3,String(Math.max(a,b,operation==='add'?a+b:a-b)).length);
+  const d=Array.from({length:width},(_,i)=>Math.floor(a/(10**i))%10);
+  const e=Array.from({length:width},(_,i)=>Math.floor(b/(10**i))%10);
+  const columns=[];let carry=0;
+  for(let i=0;i<width;i++){
+    const carryIn=carry;
+    if(operation==='sub'){
+      const lower=e[i]+carryIn;
+      const borrow=d[i]<lower?1:0;
+      const target=d[i]+borrow*10;
+      columns.push({top:d[i],bottom:e[i],carryIn,lower,target,digit:target-lower,carryOut:borrow});
+      carry=borrow;
+    }else{
+      const sum=d[i]+e[i]+carryIn;
+      columns.push({top:d[i],bottom:e[i],carryIn,digit:sum%10,carryOut:Math.floor(sum/10),sum});
+      carry=Math.floor(sum/10);
+    }
+  }
+  return columns;
+}
+function makeColumn(limit=1000,operation=null){
+  const op=operation|| (rand(1,10)<=7?'sub':'add');
+  const max=limit===10000?9999:999;
+  let a,b;
+  if(op==='sub'){
+    a=rand(limit===10000?1200:310,max);
+    b=rand(105,Math.min(a-20,limit===10000?4900:800));
+  }else{
+    a=rand(limit===10000?1200:240,Math.floor(max*.7));
+    b=rand(110,Math.min(max-a,limit===10000?2700:540));
+  }
+  return {kind:'column',skill:'written',a,b,operation:op,value:op==='add'?a+b:a-b,columns:columnSteps(a,b,op)};
+}
+function columnExplanation(q){
+  const words=['Jednotky','Desítky','Stovky','Tisíce'];
+  return q.columns.map((c,i)=>{
+    if(q.operation==='sub'){
+      const target=c.target;
+      return `${words[i]}: ${c.lower} a kolik je do ${target}? ${c.digit}.${c.carryOut?' Zapamatuj si 1 do dalšího sloupce.':''}`;
+    }
+    return `${words[i]}: ${c.top} + ${c.bottom}${c.carryIn?' + 1':''} = ${c.sum}; zapíšeš ${c.digit}${c.carryOut?' a podržíš si 1':''}.`;
+  }).join(' ');
+}
+
+function rankProblems(pool,count){
+  return pool.map(q=>{
+    const s=factStats(q.a,q.b);
+    const attempts=s.yes+s.no;
+    return {q,priority:(s.no*1.6)+(attempts===0?3:0)+(s.streak===0?2:0)-(s.streak*1.5)+Math.random()*3};
+  }).sort((a,b)=>b.priority-a.priority).slice(0,count).map(x=>x.q);
+}
+function diagnosticSet(){
+  let questions=[];
+  for(let a=2;a<=10;a++)questions.push(makeMult(a,rand(2,10)));
+  questions.push(makeMult(6,6),makeMult(7,8),makeMult(8,8),makeMult(9,10));
+  questions.push(makeAdd(),makeAdd(),makeSub(),makeSub());
+  return shuffle(questions);
+}
+function recommendedSkill(){
+  return ['easy','hard','add','sub'].map(id=>({id,x:skillAccuracy(id)})).sort((a,b)=>(a.x===null?-1:a.x)-(b.x===null?-1:b.x))[0].id;
+}
+function buildQuestions(mode,focus){
+  if(mode==='daily'){
+    // Důležité základy opakujeme každý den, těžší násobilku častěji.
+    const all=factBank();
+    const hard=all.filter(q=>q.a>=6 && q.b>=6);
+    const easy=all.filter(q=>q.a<6 || q.b<6);
+    const priorityPair=[makeMult(6,6),makeMult(8,8),makeMult(9,10),makeMult(8,10)];
+    const otherHard=hard.filter(q=>!((q.a===6&&q.b===6)||(q.a===8&&q.b===8)||(q.a===9&&q.b===10)||(q.a===8&&q.b===10)));
+    const groups=[
+      [...priorityPair,...rankProblems(otherHard,4),...rankProblems(easy,4)],
+      Array.from({length:8},makeDivide),
+      Array.from({length:6},()=>makeCompare(1000)),
+      Array.from({length:8},()=>makeHundreds(1000)),
+      Array.from({length:4},()=>makeColumn(1000))
+    ];
+    return groups.flatMap((qs,i)=>shuffle(qs).map(q=>({...q,dailyBlock:DAILY_BLOCKS[i].id})));
+  }
+  if(mode==='schoolTest'){
+    return shuffle([
+      ...rankProblems(factBank(),7),
+      ...Array.from({length:3},makeDivide),
+      ...Array.from({length:3},()=>makeCompare(1000)),
+      ...Array.from({length:4},()=>makeHundreds(1000)),
+      ...Array.from({length:3},()=>makeColumn(1000))
+    ]);
+  }
+  if(mode==='diagnostic')return diagnosticSet();
+  if(mode==='table'){
+    if(focus==='mix')return rankProblems(factBank(),18);
+    const n=+focus;
+    return shuffle(Array.from({length:10},(_,i)=>makeMult(n,i+1)));
+  }
+  if(mode==='multiply')return rankProblems(factBank(),12);
+  if(mode==='school'){
+    if(focus==='division')return Array.from({length:10},()=>makeDivide());
+    if(focus==='compare')return Array.from({length:10},()=>makeCompare(schoolRange));
+    if(focus==='written')return Array.from({length:6},()=>makeColumn(schoolRange));
+    if(focus==='decomposition')return Array.from({length:6},()=>makeDecomposition(schoolRange));
+    if(focus==='hundreds')return Array.from({length:10},()=>makeHundreds(schoolRange));
+  }
+  if(mode==='practice'){
+    if(focus==='add')return Array.from({length:12},makeAdd);
+    if(focus==='sub')return Array.from({length:12},makeSub);
+    const values=focus==='easy'?[1,2,3,4,5]:[6,7,8,9,10];
+    const bank=[];for(const a of values)for(let b=1;b<=10;b++)bank.push(makeMult(a,b));
+    return rankProblems(bank,12);
+  }
+  return [makeMult(2,2)];
+}
+function start(mode,focus){
+  if(mode==='daily'){
+    if(dailyCompleted()){go('daily');return;}
+    if(hasDailyActive()){resumeDaily();return;}
+  }
+  game={mode,focus:focus||null,questions:buildQuestions(mode,focus),index:0,yes:0,total:0,by:Object.fromEntries(skillOrder.map(k=>[k,{yes:0,total:0}])),details:[],pendingEntry:null};
+  if(mode==='daily'){game.dayKey=dateKey();game.elapsedMs=0;}
+  feedback=null;
+  go('game');
+  if(mode==='daily')saveDailySnapshot();
+}
+function resumeDaily(){
+  if(dailyCompleted()){go('daily');return;}
+  if(!hasDailyActive()){start('daily');return;}
+  game=JSON.parse(JSON.stringify(data.daily.active.game));
+  feedback=data.daily.active.feedback||null;
+  dailyClockAnchor=null;
+  go('game');
+}
+function dailyBlockFor(q){return DAILY_BLOCKS.find(b=>b.id===q.dailyBlock)||DAILY_BLOCKS[0];}
+function dailyStats(){
+  const c=dailyCompleted();
+  if(c)return {type:'completed',count:c.total,total:c.total,yes:c.yes,time:c.elapsedMs};
+  if(hasDailyActive()){
+    const g=data.daily.active.game;
+    return {type:'active',count:g.index,total:g.questions.length,yes:g.yes,time:g.elapsedMs||0};
+  }
+  return {type:'new',count:0,total:DAILY_BLOCKS.reduce((a,b)=>a+b.count,0),yes:0,time:0};
+}
+function formatQuestion(q){return `${q.a} ${q.kind==='mult'?'×':q.kind==='add'||(q.kind==='written'||q.kind==='column')&&q.operation==='add'?'+':q.kind==='div'?':':q.kind==='compare'?'□':'−'} ${q.b}`;}
+function explanation(q){
+  if(q.kind==='mult'){
+    const a=q.a,b=q.b;
+    if(b===1)return `${a} × 1 znamená jedno číslo ${a}. Výsledek je ${q.value}.`;
+    if(b<=5)return `${a} × ${b} = ${a} + ${Array.from({length:b-1},()=>a).join(' + ')} = ${q.value}.`;
+    return `${a} × ${b} si rozložíš na ${a} × 5 + ${a} × ${b-5} = ${a*5} + ${a*(b-5)} = ${q.value}.`;
+  }
+  if(q.kind==='div')return `Dělení je opačné násobení: ${q.b} × ${q.value} = ${q.a}.`;
+  if(q.kind==='compare')return `${q.a} ${q.value} ${q.b}. Porovnej nejdřív stovky, potom desítky a jednotky.`;
+  if(q.kind==='column')return columnExplanation(q);
+  if(q.kind==='written')return `${q.a} ${q.operation==='add'?'+':'−'} ${q.parts[0]} = ${q.steps[0]}, potom ${q.operation==='add'?'+':'−'} ${q.parts[1]} = ${q.steps[1]}, nakonec ${q.operation==='add'?'+':'−'} ${q.parts[2]} = ${q.value}.`;
+  if(q.kind==='add'){const des=Math.floor(q.b/10)*10,ones=q.b%10;return `${q.a} + ${des} = ${q.a+des}, potom + ${ones} = ${q.value}.`;}
+  const des=Math.floor(q.b/10)*10,ones=q.b%10;
+  return `${q.a} − ${des} = ${q.a-des}, potom − ${ones} = ${q.value}.`;
+}
+function record(q,correct){
+  const s=data.skills[q.skill];s[correct?'yes':'no']++;
+  const by=game.by[q.skill];by.total++;if(correct)by.yes++;
+  game.total++;if(correct)game.yes++;
+  if(q.kind==='mult'){
+    const f=data.facts[q.key]||(data.facts[q.key]={yes:0,no:0,streak:0});
+    f[correct?'yes':'no']++;
+    f.streak=correct?Math.min(99,(f.streak||0)+1):0;
+  }
+  data.xp+=correct?10:5;
+  if(game) game.details.push({a:q.a,b:q.b,kind:q.kind,skill:q.skill,dailyBlock:q.dailyBlock||null,operation:q.operation||null,expected:q.value,correct,steps:q.kind==='written'?q.steps:q.kind==='column'?q.columns:null,entered:game.pendingEntry||null});
+  game.pendingEntry=null;
+  save();
+}
+function numericInputValue(id){
+  const el=document.getElementById(id),raw=(el?.value||'').trim();
+  if(!/^-?\d{1,5}$/.test(raw)){el?.focus();return null;}
+  return Number(raw);
+}
+function checkCompare(symbol){
+  if(feedback)return;
+  const q=game.questions[game.index];
+  const correct=symbol===q.value;
+  game.pendingEntry={symbol};
+  record(q,correct);
+  feedback={stage:correct?'correct':'wrong',correct,guess:symbol,retryCount:0};
+  playSound(correct?'correct':'wrong'); voiceAnswer(q,correct);
+  if(game?.mode==='daily')saveDailySnapshot();
+  render();
+}
+function checkColumn(){
+  if(feedback)return;
+  const q=game.questions[game.index];
+  if(q.kind!=='column')return;
+  const digits=[];
+  for(let i=0;i<q.columns.length;i++){
+    const field=$(`#col-digit-${i}`);
+    const raw=field?.value.trim()||'';
+    if(!/^[0-9]$/.test(raw)){
+      field?.focus();field?.setCustomValidity('Sem napiš jednu číslici 0 až 9.');field?.reportValidity();field?.setCustomValidity('');return;
+    }
+    digits.push(Number(raw));
+  }
+  const carries=q.columns.slice(0,-1).map((_,i)=>Boolean($(`#col-carry-${i}`)?.checked)?1:0);
+  const digitsOk=digits.every((v,i)=>v===q.columns[i].digit);
+  const carriesOk=carries.every((v,i)=>v===q.columns[i].carryOut);
+  const correct=digitsOk&&carriesOk;
+  const guess=digits.slice().reverse().join('');
+  game.pendingEntry={digits,carries,final:Number(guess)};
+  record(q,correct);
+  feedback={stage:correct?'correct':'wrong',correct,guess,retryCount:0,columnValues:digits,columnCarries:carries};
+  playSound(correct?'correct':'wrong'); voiceAnswer(q,correct);
+  if(game?.mode==='daily')saveDailySnapshot();
+  render();
+}
+function checkWritten(){
+  if(feedback)return;
+  const ids=['written-step1','written-step2','written-final'];
+  const values=ids.map(n=>numericInputValue(n));
+  if(values.some(v=>v===null))return;
+  const q=game.questions[game.index];
+  const correct=values.every((v,i)=>v===q.steps[i]);
+  game.pendingEntry={step1:values[0],step2:values[1],final:values[2]};
+  record(q,correct);
+  feedback={stage:correct?'correct':'wrong',correct,guess:values[2],retryCount:0,writtenValues:values};
+  playSound(correct?'correct':'wrong'); voiceAnswer(q,correct);
+  if(game?.mode==='daily')saveDailySnapshot();
+  render();
+}
+function checkAnswer(){
+  const input=$('#number-answer');
+  if(!input)return;
+  const raw=input.value.trim();
+  if(!/^-?\d{1,4}$/.test(raw)){input.focus();input.setCustomValidity('Zadej celé číslo.');input.reportValidity();input.setCustomValidity('');return;}
+  const value=Number(raw),q=game.questions[game.index],correct=value===q.value;
+  if(feedback && feedback.stage==='correction'){
+    if(correct){feedback={stage:'fixed',correct:false,guess:feedback.guess};playSound('correct');}
+    else{feedback.retryCount=(feedback.retryCount||0)+1;feedback.wrongCorrection=raw;playSound('wrong');}
+    if(game?.mode==='daily')saveDailySnapshot();
+    render();return;
+  }
+  game.pendingEntry={final:value};
+  record(q,correct);
+  feedback={stage:correct?'correct':'wrong',correct,guess:raw,retryCount:0};
+  playSound(correct?'correct':'wrong'); voiceAnswer(q,correct);
+  if(game?.mode==='daily')saveDailySnapshot();
+  render();
+}
+function nextQuestion(){
+  if(!game)return;
+  feedback=null;game.index++;
+  if(game.index===game.questions.length){finishGame();return;}
+  if(game.mode==='daily')saveDailySnapshot();
+  render();
+}
+function gradeForPercent(percent){
+  // Orientační stupnice pouze v akademii: škola může mít jiné hranice.
+  return percent>=90?1:percent>=75?2:percent>=60?3:percent>=40?4:5;
+}
+function schoolMarkHtml(s){
+  // Při procvičování dostává Šája nápovědu. Známka je proto pouze motivační
+  // hodnocení PRVNÍCH odpovědí, nikoliv predikce skutečného hodnocení ve škole.
+  if(!s || !Number.isFinite(Number(s.total)) || Number(s.total)<=0)return '';
+  const rate=Math.round(100*Number(s.yes)/Number(s.total));
+  const mark=gradeForPercent(rate);
+  const isSchoolTest=s.mode==='schoolTest';
+  const mistakes=(Array.isArray(s.details)?s.details:[]).filter(d=>d && !d.correct).slice(0,8);
+  const gradeLabel=isSchoolTest?'Orientační známka ze školního testu':'Tréninková známka';
+  const gradeNote=isSchoolTest
+   ? 'Test byl bez nápovědy. Jde o orientační známku v akademii; ve škole mohou platit jiná pravidla.'
+   : 'Orientačně podle prvních odpovědí, i když se Šája později opravila. Při procvičování může používat nápovědu, takže to není školní známka.';
+  return `<section class="mark-report" aria-label="Hodnocení dokončeného cvičení"><div class="mark-card"><div class="mark-number">${mark}</div><div><strong>${gradeLabel}: ${mark}</strong><p>${rate} % správně · ${s.yes} z ${s.total} příkladů</p><p>${gradeNote}</p></div></div>
+  <div class="notice"><strong>Stupnice akademie:</strong> 1: 90–100 %, 2: 75–89 %, 3: 60–74 %, 4: 40–59 %, 5: 0–39 %.</div>
+  ${mistakes.length?`<h3 style="text-align:left">Co si ještě zopakovat</h3><div class="error-list">${mistakes.map(d=>`<div class="error-card"><strong>${esc(reportQuestionLabel(d))}</strong><p>${esc(explanationFromRecord(d))}</p></div>`).join('')}</div>`:`<div class="notice">${s.yes===s.total?'Všechno správně! Výborná práce.':'Některé starší výsledky neobsahují jednotlivé chyby. Zkus další krátké cvičení.'}</div>`}</section>`;
+}
+function explanationFromRecord(d){
+  const q={a:d.a,b:d.b,value:d.expected,kind:d.kind,operation:d.operation};
+  if(d.kind==='mult')return d.a===10||d.b===10?`Při násobení deseti přidáme nulu: ${d.a} krát ${d.b} je ${d.expected}.`:`Spočítej si například ${d.a} krát pět a přičti zbývající násobky. Výsledek je ${d.expected}.`;
+  if(d.kind==='div')return `Zkontroluj násobením: ${d.b} krát ${d.expected} je ${d.a}.`;
+  if(d.kind==='compare')return `Porovnej nejdřív stovky, pak desítky a jednotky.`;
+  if(d.kind==='column')return `Začni jednotkami zprava a nezapomeň na přenos jedničky.`;
+  return `Zkus si příklad znovu rozložit na menší části.`;
+}
+function finishGame(){
+  if(game.mode==='daily')syncDailyClock();
+  const s={mode:game.mode,focus:game.focus,date:new Date().toISOString(),yes:game.yes,total:game.total,by:game.by,range:game.mode==='school'?schoolRange:null,details:game.details,
+    dayKey:game.mode==='daily'?game.dayKey:undefined,elapsedMs:game.mode==='daily'?game.elapsedMs:undefined};
+  let award=null;
+  if(game.mode==='diagnostic')data.diagnosticDone=true;
+  if(game.mode==='table' && game.yes===game.questions.length){
+    const id=game.focus;
+    if(!data.badges[id]){
+      data.badges[id]=s.date;
+      data.xp+=40;
+      award=id==='mix'?'Hvězda za perfektní mix':'Hvězda za násobilku '+id;
+    }
+  }
+  const complete=Array.from({length:9},(_,i)=>Boolean(data.badges[i+1])).every(Boolean);
+  if(complete && !data.allNine){data.allNine=true;data.xp+=200;award='Koruna mistryně celé násobilky!';}
+  if(game.mode==='daily'){
+    data.daily.completed[game.dayKey]={yes:s.yes,total:s.total,elapsedMs:s.elapsedMs,date:s.date};
+    data.daily.active=null;
+    data.xp+=20; // odměna za dokončení, i když některý příklad nevyšel
+    award='Hvězdička za dnešní úkol!';
+    dailyClockAnchor=null;
+  }
+  data.sessions.push(s);
+  lastSummary={...s,award};
+  save();
+  game=null;feedback=null;
+  if(award)playSound('reward');
+  go('summary');
+}
+function go(next){
+  if(game?.mode==='daily' && view==='game' && next!=='game' && next!=='summary'){
+    saveDailySnapshot();game=null;feedback=null;dailyClockAnchor=null;
+  }
+  if(next==='parents'&&!parentUnlocked){view='parentGate';pinError=false;}
+  else{view=next;if(next!=='parents')parentUnlocked=false;}
+  render();window.scrollTo({top:0,behavior:'instant'});
+}
+function quitGame(){
+  if(game?.mode==='daily'){
+    saveDailySnapshot();game=null;feedback=null;dailyClockAnchor=null;go('daily');return;
+  }
+  if(confirm('Ukončit právě rozehrané cvičení? Dosavadní odpovědi už zůstaly ve výsledcích.')){game=null;feedback=null;go('home');}
+}
+function avatarSvg(size=250){
+  const a=AVATARS[data.settings.avatar]||AVATARS.kouzelnice;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 240 240" role="img" aria-label="Charlotte – ${a.name}" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="120" cy="120" r="108" fill="#ebe9ff"/><circle cx="70" cy="64" r="4" fill="#f0bb45"/><circle cx="183" cy="82" r="6" fill="#74d2cb"/>
+    <path d="M72 204 Q80 155 120 157 Q160 155 170 204 Q120 226 72 204" fill="${a.body}" stroke="#4b4c80" stroke-width="5"/>
+    <path d="M85 137 Q76 100 90 78 Q112 52 148 78 Q164 100 154 140" fill="#59426d" stroke="#59426d" stroke-width="16" stroke-linecap="round"/>
+    <ellipse cx="120" cy="119" rx="45" ry="50" fill="#f2c7a4" stroke="#bd8c85" stroke-width="3"/>
+    <path d="M76 112 Q75 71 124 70 Q151 70 166 105 Q150 97 143 86 Q122 111 76 112" fill="#59426d"/>
+    <ellipse cx="104" cy="123" rx="4.8" ry="6.3" fill="#38334f"/><ellipse cx="138" cy="123" rx="4.8" ry="6.3" fill="#38334f"/>
+    <ellipse cx="90" cy="139" rx="9" ry="5" fill="#ee98aa" opacity=".6"/><ellipse cx="150" cy="139" rx="9" ry="5" fill="#ee98aa" opacity=".6"/>
+    <path d="M112 148 Q122 158 132 148" fill="none" stroke="#a26070" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M70 84 L120 24 L170 84 Z" fill="${a.hat}" stroke="#474277" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M64 85 Q120 98 175 85" fill="none" stroke="#474277" stroke-width="9" stroke-linecap="round"/>
+    <path d="M119 46 L123 55 L132 56 L125 63 L127 72 L119 67 L111 72 L113 63 L106 56 L115 55 Z" fill="#ffdc68"/>
+    <path d="M100 174 L120 185 L140 174" fill="none" stroke="#f6deff" stroke-width="6" stroke-linecap="round"/>
+    <path d="M177 174 L196 127" stroke="#957456" stroke-width="6" stroke-linecap="round"/><path d="M196 109 L200 120 L211 124 L200 128 L196 140 L192 128 L181 124 L192 120 Z" fill="#ffd66d" stroke="#b7963d" stroke-width="2"/>
+  </svg>`;
+}
+function trophyRack(compact=false){
+  const badges=Array.from({length:10},(_,i)=>i+1);
+  return `<div class="trophy-rack ${compact?'small-rack':''}">${badges.map(n=>`<div class="trophy ${data.badges[n]?'earned':''}" title="${data.badges[n]?'Odměna získána '+niceDate(data.badges[n]):'Získej 9 z 9 v násobilce '+n}">
+    <span class="trophy-icon">${data.badges[n]?'⭐':'☆'}</span><strong>${n}×</strong></div>`).join('')}</div>`;
+}
+function homeHtml(){
+  const earned=Array.from({length:10},(_,i)=>Number(Boolean(data.badges[i+1]))).reduce((a,b)=>a+b,0);
+  return `<div class="home-grid">
+    <section class="panel welcome">
+      <div class="eyebrow">✨ Ahoj, Šájo!</div>
+      <h2>Každý příklad je malý krok vpřed.</h2>
+      <p>Vyber si procvičování. Nespěchej – nejdřív správně, potom rychleji. A když to nevyjde, společně na to přijdeme.</p>
+      <div class="hero-buttons">
+        <button class="btn mint" id="start-diagnostic">${data.diagnosticDone?'🔍 Zopakovat úvodní test':'🔍 Začít úvodní test'}</button>
+        <button class="btn" id="start-mult-only">✖️ Jen násobilka</button>
+      </div>
+      ${dailyHomeBanner()}
+      <div class="softline"></div>
+      <h3 style="margin:0 0 11px">Co chceš dnes potrénovat?</h3>
+      <div class="home-buttons">
+        <button data-jump="daily"><span>📅</span><strong>Denní úkol</strong><small>Cca 20 minut a odměna za dokončení</small></button>
+        <button data-jump="tablePractice"><span>✖️</span><strong>Násobilka 1×1</strong><small>Vyber řadu 1–9</small></button>
+        <button data-jump="practice"><span>🧮</span><strong>Další příklady</strong><small>Počítej a uč se</small></button>
+        <button data-jump="tableOverview"><span>📋</span><strong>Tabulka 1×1</strong><small>Přehled výsledků</small></button>
+        <button data-jump="progress"><span>🏆</span><strong>Moje výsledky</strong><small>Odznaky a úspěchy</small></button>
+        <button data-jump="school"><span>📚</span><strong>Školní učivo</strong><small>Porovnávání, dělení, počítání pod sebou</small></button>
+      </div>
+    </section>
+    <aside class="panel avatar-panel">
+      <div class="character-halo">${avatarSvg(240)}</div>
+      <h3>Moje postavička</h3>
+      <p class="small">Vyber, kdo tě bude při učení provázet.</p>
+      <div class="avatar-choices">${Object.entries(AVATARS).map(([id,a])=>`<button class="avatar-choice ${data.settings.avatar===id?'selected':''}" data-avatar="${id}" aria-label="${a.name}" title="${a.name}">${a.emoji}</button>`).join('')}</div>
+      <div class="hero-stats"><span>⭐ ${data.xp} XP</span><span>🏅 ${earned}/10 hvězd</span><span>📘 Úroveň ${level()}</span></div>
+    </aside>
+  </div>
+  <section class="panel" style="margin-top:16px"><div class="split-head"><div><div class="eyebrow">🎁 Sbírka úspěchů</div><h3 class="section-title">Hvězdy za násobilku</h3><p class="small">Získej hvězdy za všechny řady 1× až 10×. Pak na tebe čeká koruna!</p></div><div class="crown ${data.allNine?'earned':''}">${data.allNine?'👑':'🔒'}</div></div>${trophyRack()}</section>`;
+}
+function dailyHomeBanner(){
+  const st=dailyStats();
+  const desc=st.type==='completed'?'Dnes splněno! Skvělá práce. Zítra čeká další sada.':st.type==='active'?`Rozpracováno: ${st.count}/${st.total} příkladů. Můžeš pokračovat tam, kde jsi skončila.`:'Každý den krátká cesta matematikou, bez závodění s časem.';
+  return `<div class="daily-banner"><h3>📅 Dnešní matematická výprava ${st.type==='completed'?'✅':''}</h3><p>${desc}</p><button class="btn mint" data-jump="daily">${st.type==='completed'?'🏅 Podívat se na dnešní výsledek':st.type==='active'?'▶️ Pokračovat v denním úkolu':'▶️ Začít denní úkol'}</button></div>`;
+}
+function dailyHtml(){
+  const st=dailyStats();
+  const done=st.type==='completed';
+  const active=st.type==='active';
+  return `<section class="panel">
+    <div class="eyebrow">📅 Každodenní trénink</div>
+    <h2 class="section-title">Dnešní úkol · přibližně 20 minut</h2>
+    <p class="small">Úkol je sestavený ze základů i aktuálního školního učiva. Nejde o test na rychlost. Pokud něco trvá déle, je to v pořádku.</p>
+    <div class="daily-banner"><h3>${done?'🎉 Dnešní úkol dokončen!':active?'📖 Tvůj rozpracovaný úkol':'🌞 Připravena na dnešní úkol?'}</h3>
+      <p>${done?`Správně ${st.yes} z ${st.total}. Čas věnovaný řešení: ${minutesText(st.time)}.`:active?`Hotovo ${st.count} z ${st.total} příkladů. Čas procvičování: ${minutesText(st.time)}.`:'Připraveno 38 různých příkladů v pěti částech. Orientačně 20 minut. Kdykoliv můžeš dát pauzu.'}</p>
+      ${done?'<span class="tag">✅ Splněno na dnešek</span>':`<button class="btn mint" id="start-daily">${active?'▶️ Pokračovat':'▶️ Začít dnešní úkol'}</button>`}
+    </div>
+    <h3 class="section-title">Z čeho se dnešní úkol skládá?</h3>
+    <div class="daily-stages">${DAILY_BLOCKS.map(b=>`<div class="daily-stage"><span class="stage-emoji">${b.emoji}</span><strong>${b.label}</strong><small>${b.count} příkladů · cca ${b.minutes} min</small></div>`).join('')}</div>
+    <div class="notice">💜 Čas je pouze orientační a nemá limit. Když Charlotte klikne na „Uložit a dát pauzu“, může se k rozdělanému úkolu vrátit i po zavření prohlížeče. Dnešní splnění se zaznamená až po posledním příkladu.</div>
+    <h3 class="section-title" style="margin-top:22px">Posledních 7 dní</h3>
+    ${dailyHistoryHtml()}
+  </section>`;
+}
+function dailyHistoryHtml(){
+  const days=Array.from({length:7},(_,i)=>{
+    const d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-(6-i));
+    const key=dateKey(d),done=Boolean(data.daily.completed[key]);
+    return `<div class="daily-day ${done?'done':''}" title="${key}"><strong>${d.toLocaleDateString('cs-CZ',{day:'numeric',month:'numeric'})}</strong><span>${done?'✅':'·'}</span></div>`;
+  });
+  return `<div class="daily-history">${days.join('')}</div>`;
+}
+function practiceHtml(){
+  return `<section class="panel"><div class="eyebrow">🧮 Procvičování</div><h2 class="section-title">Vyber oblast</h2>
+    <p class="small">Každá sada má 12 úloh. Po chybě si můžeš ukázat postup a správnou odpověď si zkusit znovu.</p>
+    <div class="skill-grid">${['easy','hard','add','sub'].map(id=>`<button class="skill-btn" data-skill="${id}"><span class="big">${SKILLS[id].emoji}</span><strong>${SKILLS[id].name}</strong><small>${SKILLS[id].desc}</small><small class="tag">${skillStatusText(id)}</small></button>`).join('')}
+      <button class="skill-btn highlighted" id="practice-multiplication-only"><span class="big">✖️</span><strong>Jen násobilka 1×1</strong><small>Bez sčítání a odčítání, příklady od 1×1 do 10×10.</small><small class="tag">12 příkladů</small></button>
+      <button class="skill-btn" data-jump="school"><span class="big">📚</span><strong>Školní učivo</strong><small>Porovnávání čísel, dělení a počítání do 1 000.</small><small class="tag">4 nové oblasti</small></button>
+      <button class="skill-btn" id="recommended-practice"><span class="big">✨</span><strong>Doporučený trénink</strong><small>Začneme tím, co je teď nejslabší.</small><small class="tag">${esc(SKILLS[recommendedSkill()].name)}</small></button>
+    </div></section>`;
+}
+function tablePracticeHtml(){
+  return `<section class="panel"><div class="eyebrow">✖️ Násobilka 1×1</div><h2 class="section-title">Kterou násobilku procvičíme?</h2>
+   <p class="small">Vyber číslo 1–10, nebo všechny příklady dohromady. Každá řada má 10 příkladů.</p>
+   <div class="table-picker">${[1,2,3,4,5,6,7,8,9,10,'mix'].map(n=>`<button data-row="${n}" class="${String(n)===selectedTable?'active':''}">${n==='mix'?'🎲 Vše':n+' ×'}</button>`).join('')}</div>
+   <div class="fact-grid">${selectedTable==='mix'?Array.from({length:10},(_,i)=>{
+     const n=i+1;return `<div class="fact-card"><strong>${n} × 1 až ${n} × 10</strong><small>${data.badges[n]?'⭐ Hvězda získána':'☆ Hvězda čeká'}</small><span class="tag">Úspěšnost ${rowAccuracy(n)??'–'}${rowAccuracy(n)===null?'':' %'}</span></div>`;
+   }).join(''):Array.from({length:10},(_,i)=>{
+     const n=Number(selectedTable),b=i+1,s=masteryStatus(n,b);
+     return `<div class="fact-card ${s}"><strong>${n} × ${b} = ${n*b}</strong><small>${s==='good'?'✅ Upevněno':s==='mid'?'🟡 Procvičujeme':s==='bad'?'💗 Chce procvičit':'▫️ Ještě nezkoušeno'}</small></div>`;
+   }).join('')}</div>
+   <div class="parent-actions"><button class="btn mint" id="start-table">▶️ Začít procvičování</button><button class="btn secondary" data-jump="tableOverview">📋 Otevřít tabulku 1×1</button></div>
+   <div class="notice" style="margin-top:16px">⭐ Za 10 správných odpovědí z 10 v jedné řadě získá Charlotte hvězdu. Za řady 1–9 platí původní koruna; řada 10 má vlastní hvězdu.</div>
+  </section>`;
+}
+function tableOverviewHtml(){
+  let tbl='<table><thead><tr><th>×</th>';
+  for(let n=1;n<=10;n++)tbl+=`<th>${n}</th>`;
+  tbl+='</tr></thead><tbody>';
+  for(let a=1;a<=10;a++){
+    tbl+=`<tr><th>${a}</th>`;
+    for(let b=1;b<=10;b++)tbl+=`<td class="cell-${masteryStatus(a,b)}" title="${a} × ${b} = ${a*b}">${a*b}</td>`;
+    tbl+='</tr>';
+  }
+  tbl+='</tbody></table>';
+  return `<section class="panel"><div class="eyebrow">📋 Přehled násobilky</div><h2 class="section-title">Malá násobilka od 1×1 do 10×10</h2>
+  <div class="legend"><span>▫️ Nezkoušeno</span><span>💗 Potřebuje procvičit</span><span>🟡 Učíme se</span><span>✅ Dvakrát správně za sebou</span></div>
+  <div class="big-table">${tbl}</div><div class="parent-actions"><button class="btn mint" data-jump="tablePractice">✖️ Procvičit násobilku</button></div></section>`;
+}
+function schoolTestHtml(){
+  return `<section class="panel"><div class="eyebrow">📝 Školní test</div>
+  <h2 class="section-title">Zkus si školní test nanečisto</h2>
+  <p>20 různých úloh z násobilky 1–10, dělení, porovnávání a počítání do 1 000. Bez časového limitu. Správné výsledky se během testu nezobrazují, aby si Charlotte výsledek zjistila sama.</p>
+  <div class="notice"><strong>Jaké dostanu hodnocení?</strong> Orientační známku 1–5 a vysvětlení chyb na konci testu. Známka neznamená, jak by rozhodla paní učitelka.</div>
+  <div class="parent-actions"><button class="btn mint" id="start-school-test">📝 Začít školní test (20 úloh)</button></div></section>`;
+}
+function schoolHtml(){
+  const modes=[
+    ['division','➗','Dělení','Dělení podle násobilky 2–9.'],
+    ['compare','⚖️','Větší, menší, rovná se','Zvol <, = nebo > mezi dvěma čísly.'],
+    ['written','✍️','Písemné počítání','Sčítání a odčítání podle školní metody, s přenosy.'],
+    ['decomposition','🧩','Rozklady čísel','Výpočet postupně po stovkách, desítkách a jednotkách.'],
+    ['hundreds','🔢','Sčítání a odčítání','Počítání do 1 000, i s přechodem.']
+  ];
+  return `<section class="panel"><div class="eyebrow">📚 Podle letošních sešitů</div><h2 class="section-title">Školní procvičování</h2>
+  <p class="small">Násobilka zůstává v hlavní části. Tady jsou další témata, která Charlotte probírá.</p>
+  <div class="notice" style="margin:16px 0"><strong>Rozsah příkladů:</strong> <label class="range-option"><input type="radio" name="school-range" value="1000" ${schoolRange===1000?'checked':''}> Do 1 000 (doporučeno)</label>
+    <label class="range-option"><input type="radio" name="school-range" value="10000" ${schoolRange===10000?'checked':''}> Do 10 000 (rozšíření)</label>
+    <p style="margin:7px 0 0;font-size:.9rem">Dělení podle násobilky zůstává stejné. Rozšíření do 10 000 je dobrovolné.</p></div>
+  <div class="skill-grid">${modes.map(([id,icon,title,desc])=>`<button class="skill-btn" data-school="${id}"><span class="big">${icon}</span><strong>${title}</strong><small>${desc}</small><small class="tag">${id==='written'||id==='decomposition'?'6 příkladů':'10 příkladů'}</small></button>`).join('')}</div>
+  <div class="notice" style="margin-top:16px">Písemné počítání odpovídá školnímu postupu: <strong>počítat zprava doleva, doplňovat a držet si jedničku</strong>. Rozklady mají vlastní samostatné tlačítko.</div></section>`;
+}
+function compareForm(q){
+  return `<div class="compare-choice"><p class="answer-label">Vyber správný symbol mezi čísly</p><div class="compare-line"><strong>${q.a}</strong><span>?</span><strong>${q.b}</strong></div><div class="compare-buttons">
+  <button type="button" class="btn secondary" data-compare="<" aria-label="Menší než">&lt;</button>
+  <button type="button" class="btn secondary" data-compare="=" aria-label="Rovná se">=</button>
+  <button type="button" class="btn secondary" data-compare=">" aria-label="Větší než">&gt;</button>
+  </div></div>`;
+}
+function columnForm(q){
+  const sign=q.operation==='add'?'+':'−';
+  const size=q.columns.length;
+  const names=['jednotky','desítky','stovky','tisíce'];
+  const digitsRow=n=>Array.from({length:size},(_,i)=>`<span class="digit-box">${Math.floor(n/(10**(size-i-1)))%10}</span>`).join('');
+  const inputs=Array.from({length:size},(_,rev)=>{
+    const i=size-1-rev;
+    return `<input type="text" inputmode="numeric" maxlength="1" required pattern="[0-9]" id="col-digit-${i}" aria-label="Číslice výsledku: ${names[i]}" autocomplete="off" placeholder="?">`;
+  }).join('');
+  const carryChecks=q.columns.slice(0,-1).map((col,i)=>
+    `<label class="carry-choice"><input type="checkbox" id="col-carry-${i}"> ☝️ Počítám ${names[i]} a držím si 1 do ${names[i+1]}</label>`).join('');
+  return `<form id="column-form" class="real-column-form" autocomplete="off">
+    <p class="small"><strong>Začni zprava od jednotek.</strong> Výsledek napiš po číslicích. Když si podržíš jedničku, označ ji pod příkladem.</p>
+    <div class="column-paper" aria-label="Písemný příklad ${q.a} ${sign} ${q.b}">
+      <div class="digit-row" style="--columns:${size}"><span class="math-prefix"></span>${digitsRow(q.a)}</div>
+      <div class="digit-row" style="--columns:${size}"><span class="math-prefix">${sign}</span>${digitsRow(q.b)}</div>
+      <div class="column-underline"></div>
+      <div class="digit-row" style="--columns:${size}"><span class="math-prefix">=</span>${inputs}</div>
+    </div>
+    <div class="carry-list">${carryChecks}</div>
+    <div class="notice" style="margin:12px 0">${q.operation==='sub'?'<strong>Příklad:</strong> Když máš 4 − 5, řekneš „5 a kolik je do 14?“, napíšeš 9 a zapamatuješ si jedničku k dolním desítkám.':'<strong>Příklad:</strong> Když 8 + 7 = 15, zapíšeš 5 a jedničku si zapamatuješ do dalšího sloupce.'}</div>
+    <button type="submit" class="btn mint">✅ Zkontrolovat číslice i přenosy</button>
+  </form>`;
+}
+function writtenForm(q){
+  const sign=q.operation==='add'?'+':'−',part=q.parts;
+  return `<div class="column-work">
+    <div class="vertical-task" aria-label="${q.a} ${sign} ${q.b}"><div>${q.a}</div><div class="line-two"><span>${sign}</span>${q.b}</div><div class="stroke"></div><div class="empty-final">?</div></div>
+    <form id="written-form" class="written-form" autocomplete="off">
+      <p class="small">Rozlož druhé číslo: <strong>${q.b} = ${part[0]} + ${part[1]} + ${part[2]}</strong>.</p>
+      <div class="step-row"><label for="written-step1">1. Stovky: ${q.a} ${sign} ${part[0]} =</label><input type="number" id="written-step1" required aria-label="Mezivýsledek po stovkách"></div>
+      <div class="step-row"><label for="written-step2">2. Desítky: výsledek výše ${sign} ${part[1]} =</label><input type="number" id="written-step2" required aria-label="Mezivýsledek po desítkách"></div>
+      <div class="step-row final-row"><label for="written-final">3. Jednotky: výsledek výše ${sign} ${part[2]} =</label><input type="number" id="written-final" required aria-label="Konečný výsledek"></div>
+      <button type="submit" class="btn mint">✅ Zkontrolovat postup i výsledek</button>
+    </form>
+  </div>`;
+}
+function gameTitle(){
+  if(game.mode==='daily')return 'Denní úkol · cca 20 minut';
+  if(game.mode==='schoolTest')return 'Školní test – 20 příkladů';
+  if(game.mode==='diagnostic')return 'Úvodní test';
+  if(game.mode==='multiply')return 'Jen malá násobilka 1×1';
+  if(game.mode==='table')return game.focus==='mix'?'Všechny násobilky dohromady':`Násobilka ${game.focus} ×`;
+  if(game.mode==='school')return (SKILLS[game.focus]?.name||'Školní učivo')+(schoolRange===10000?' · rozšíření do 10 000':'');
+  return SKILLS[game.focus]?.name||'Trénink';
+}
+function gameHtml(){
+  const q=game.questions[game.index],pct=Math.round(100*game.index/game.questions.length);
+  return `<section class="panel game-wrap"><div class="status-row"><div><div class="eyebrow">🧠 Soustřeď se na jeden příklad</div><h2 class="section-title">${gameTitle()}</h2></div><button class="btn secondary tiny" id="quit-game">${game.mode==='daily'?'⏸ Uložit a dát pauzu':'✖ Ukončit'}</button></div>
+  <div class="status-row" style="margin:10px 0"><span>Příklad <strong>${game.index+1}/${game.questions.length}</strong></span><span>${game.mode==='daily'?`⏱️ Učení <span class="daily-clock" id="daily-clock">${minutesText(game.elapsedMs||0)}</span> · bez časového limitu`:'Bez časového limitu 💜'}</span></div>
+  ${game.mode==='daily'?`<div class="notice" style="margin:10px 0">${dailyBlockFor(q).emoji} <strong>${dailyBlockFor(q).label}</strong> · část ${DAILY_BLOCKS.findIndex(b=>b.id===q.dailyBlock)+1} z 5. Čas je orientační, klidně pokračuj svým tempem.</div>`:''}
+  <div class="progress"><span style="width:${pct}%"></span></div>
+  <div class="question-layout"><div class="question-avatar">${avatarSvg(144)}<div class="bubble">${feedback?.stage==='correct' || feedback?.stage==='fixed'?'To se povedlo! 🌟':feedback?.stage==='wrong'||feedback?.stage==='correction'?'To spolu zvládneme. 💜':'Držím palce!'}</div></div>
+  <div class="question-box"><div class="question-kind">${SKILLS[q.skill].emoji} ${game.mode==='school'&&schoolRange===10000&&q.skill==='hundreds'?'Počítání do 10 000':SKILLS[q.skill].name}</div>${q.kind==='written'||q.kind==='column'?'':`<div class="question">${q.kind==='compare'?q.a+' <span class="qmark">?</span> '+q.b:formatQuestion(q)+' = <span class="qmark">?</span>'}</div>`}
+  ${feedback?feedbackHtml(q):`<div class="voice-assist"><button class="btn secondary tiny" type="button" id="read-question">🔊 Přečíst zadání</button><span class="small">${csVoice()?'Český hlas je dostupný.':'Český hlas není v systému dostupný; zadání zůstává na obrazovce.'}</span></div>`+(q.kind==='compare'?compareForm(q):q.kind==='written'?writtenForm(q):q.kind==='column'?columnForm(q):answerForm(false))}
+  </div></div></section>`;
+}
+function answerForm(correction){return `<form id="answer-form"><label class="answer-label" for="number-answer">${correction?'Napiš správný výsledek':'Napiš výsledek'}</label><input id="number-answer" class="answer" type="text" inputmode="numeric" pattern="-?[0-9]*" maxlength="4" autocomplete="off" placeholder="?" aria-label="Výsledek příkladu"><div class="answer-actions"><button class="btn mint" type="submit">${correction?'✅ Opravit odpověď':'✅ Odpovědět'}</button></div></form>${correction?'':`<p class="hint">Klidně si počítej na papíře. Není kam spěchat.</p>`}`;}
+function feedbackHtml(q){
+  if(game.mode==='schoolTest')return `<div class="feedback"><h3>📝 Odpověď zaznamenána</h3><p>Pokračuj v testu. Správné výsledky i známku uvidíš na konci.</p><button id="next-question" class="btn mint">${game.index+1===game.questions.length?'🏁 Vyhodnotit test':'➡️ Další příklad'}</button></div>`;
+  if(q.kind==='compare'||q.kind==='written'||q.kind==='column')return specialFeedbackHtml(q);
+  if(feedback.stage==='correct')return `<div class="feedback"><h3>🌟 Správně! Výborně.</h3><p><strong>${formatQuestion(q)} = ${q.value}</strong> · +10 XP</p><button id="next-question" class="btn mint">${game.index+1===game.questions.length?'🏁 Dokončit':'➡️ Další příklad'}</button></div>`;
+  if(feedback.stage==='fixed')return `<div class="feedback"><h3>💜 Teď už to umíš!</h3><p>Správně je <strong>${formatQuestion(q)} = ${q.value}</strong>. Oprava ti pomáhá se učit.</p><button id="next-question" class="btn mint">${game.index+1===game.questions.length?'🏁 Dokončit':'➡️ Další příklad'}</button></div>`;
+  const correction=feedback.stage==='correction';
+  return `<div class="feedback bad"><h3>💜 Chyba je součást učení.</h3><p>${correction?'Zkus si to ještě odvodit.':'Tvoje odpověď byla '+esc(feedback.guess)+'.'} Správně je <strong>${q.value}</strong>.</p>
+  <div class="calculation"><strong>💡 Jak si to spočítat:</strong><p>${esc(explanation(q))}</p></div>
+  ${correction?`<p>${feedback.wrongCorrection?'Ještě to nesedí, ale to nevadí. ':''}Zkus nyní výsledek napsat sama.</p>${answerForm(true)}`:''}
+  <div class="answer-actions">${!correction?`<button class="btn" id="try-correction">✏️ Zkusit opravu</button>`:''}<button class="btn secondary" id="next-question">${game.index+1===game.questions.length?'Dokončit':'Přejít dál'}</button></div>
+  </div>`;
+}
+function specialFeedbackHtml(q){
+  const correct=feedback.correct;
+  const columnExtra=q.kind==='column' && feedback.columnValues ? `<div class="calculation"><strong>Jednotlivé číslice a zapamatované jedničky:</strong>${q.columns.map((c,i)=>`<p>${['Jednotky','Desítky','Stovky','Tisíce'][i]}: ${feedback.columnValues[i]} ${feedback.columnValues[i]===c.digit?'✅':'❌ správně '+c.digit}${i<q.columns.length-1?` · jednička: ${feedback.columnCarries[i]?'ano':'ne'} ${feedback.columnCarries[i]===c.carryOut?'✅':'❌'}`:''}</p>`).join('')}</div>` : '';
+  const extra=q.kind==='written' && feedback.writtenValues
+   ? `<div class="calculation"><strong>Tvoje mezikroky:</strong><p>Stovky: ${feedback.writtenValues[0]} ${feedback.writtenValues[0]===q.steps[0]?'✅':'❌ (správně '+q.steps[0]+')'}</p><p>Desítky: ${feedback.writtenValues[1]} ${feedback.writtenValues[1]===q.steps[1]?'✅':'❌ (správně '+q.steps[1]+')'}</p><p>Výsledek: ${feedback.writtenValues[2]} ${feedback.writtenValues[2]===q.value?'✅':'❌ (správně '+q.value+')'}</p></div>`:'';
+  return `<div class="feedback ${correct?'':'bad'}"><h3>${correct?'🌟 Správně! Výborně.':'💜 Už vidíš, co zkusit příště.'}</h3><p>Správně: <strong>${q.kind==='compare'?q.a+' '+q.value+' '+q.b:formatQuestion(q)+' = '+q.value}</strong></p>${extra}${columnExtra}
+  ${correct?'':`<div class="calculation"><strong>💡 Jak na to:</strong><p>${esc(explanation(q))}</p></div>`}
+  <button id="next-question" class="btn mint">${game.index+1===game.questions.length?'🏁 Dokončit':'➡️ Další příklad'}</button></div>`;
+}
+function summaryHtml(){
+  const s=lastSummary||data.sessions.at(-1);if(!s)return homeHtml();
+  const rate=Math.round(100*s.yes/s.total);
+  const isReward=!!s.award;
+  return `<section class="panel summary center ${isReward?'celebration':''}"><div class="big-emoji">${isReward?'🏆':rate>=80?'🌟':'💜'}</div>
+    <div class="eyebrow">${s.mode==='schoolTest'?'Školní test dokončen':'Cvičení dokončeno'}</div><h2>${isReward?'Nová odměna!':rate>=80?'Krásná práce, Šájo!':'Každý pokus tě posouvá dál.'}</h2>
+    ${schoolMarkHtml(s)}
+    ${isReward?`<div class="reward-box"><span>✨ ${esc(s.award)} ✨</span><p>Za poctivou práci získáváš nový odznak.</p></div>`:''}
+    <div class="metrics"><div class="metric"><strong>${s.yes}/${s.total}</strong><span>Správně</span></div><div class="metric"><strong>${rate} %</strong><span>Úspěšnost</span></div><div class="metric"><strong>${data.xp}</strong><span>XP celkem</span></div></div>
+    <div class="notice" style="margin-top:18px">${s.mode==='daily'?`📅 Dnešní matematický úkol splněn! Aktivně strávený čas: <strong>${minutesText(s.elapsedMs||0)}</strong>. Zítra tě čeká nová sada.`:s.mode==='diagnostic'?'Úvodní test nám ukazuje, co procvičovat.':'Chyby se počítají jen z první odpovědi. Když sis je opravila, také ses něco naučila.'}</div>
+    <div class="parent-actions center-actions"><button class="btn mint" data-jump="tablePractice">✖️ Násobilka 1×1</button><button class="btn secondary" data-jump="home">🏠 Domů</button></div>
+   </section>`;
+}
+function progressHtml(){
+  const count=totalAnswers(),good=totalCorrect(),rate=acc(good,count),earned=Array.from({length:10},(_,i)=>Boolean(data.badges[i+1])).filter(Boolean).length;
+  return `<section class="panel"><div class="eyebrow">🏆 Můj pokrok</div><h2 class="section-title">Moje výsledky a odměny</h2>
+   <p class="small">Všechno postupně, žádný závod.</p>
+   <div class="metrics"><div class="metric"><strong>${good}/${count}</strong><span>Správné odpovědi</span></div><div class="metric"><strong>${rate===null?'—':rate+' %'}</strong><span>Úspěšnost</span></div><div class="metric"><strong>${earned}/10</strong><span>Získané hvězdy</span></div></div>
+   <h3 class="section-title" style="margin-top:22px">📅 Denní úkol</h3>
+   ${dailyHomeBanner()}
+   <h3 class="section-title" style="margin-top:22px">🎁 Sbírka hvězd</h3>${trophyRack()}
+   <div class="notice" style="margin-top:13px">${data.allNine?'👑 Koruna mistryně násobilky získána!':'👑 Za řady 1× až 9× získáš korunu; 10× má svoji hvězdu!'}</div>
+   <h3 class="section-title" style="margin-top:22px">Jak se mi daří?</h3>
+   <div class="result-list">${skillOrder.map(id=>`<div class="result-card"><strong>${SKILLS[id].emoji} ${SKILLS[id].name}</strong><div class="num">${skillStatusText(id)}</div><div class="small">Správně ${data.skills[id].yes} · Chybně ${data.skills[id].no}</div></div>`).join('')}</div>
+   <div class="parent-actions"><button class="btn mint" data-jump="tablePractice">Pokračovat v násobilce</button></div>
+   </section>`;
+}
+function parentGateHtml(){return `<section class="panel gate"><div class="big-emoji">🔐</div><div class="eyebrow">Jen pro dospělé</div><h2>Rodičovská sekce</h2><p class="small">Zadej rodičovský kód. Výsledky a jejich mazání pak uvidíš jen v této části.</p>
+  <form id="parent-pin-form"><label for="parent-pin">Rodičovský kód</label><input type="password" class="parent-pin" id="parent-pin" inputmode="numeric" autocomplete="off" placeholder="•••••••" required maxlength="20"><button class="btn" type="submit">🔓 Odemknout</button></form>
+  ${pinError?`<p class="pin-error" role="alert">Kód nesouhlasí. Zkus to ještě jednou.</p>`:''}<p class="small" style="margin-top:20px">Jde o jednoduchou ochranu menu v offline souboru, ne o skutečné zabezpečení dat.</p></section>`;}
+
+function countFor(id){const x=data.skills[id]||{yes:0,no:0};return (Number(x.yes)||0)+(Number(x.no)||0);}
+function safePct(yes,total){return total>0?Math.round(100*yes/total):null;}
+function resultClass(rate,count){return count<8?'not-enough':rate>=85?'good':rate<75?'attention':'';}
+function reportAreas(){
+  return skillOrder.map(id=>{
+    const x=data.skills[id]||{yes:0,no:0};
+    const yes=Number(x.yes)||0,no=Number(x.no)||0,n=yes+no,rate=safePct(yes,n);
+    return {id,name:SKILLS[id].name,emoji:SKILLS[id].emoji,yes,no,n,rate,rank:rate===null?-1:rate};
+  });
+}
+function reportStrongWeak(){
+  const areas=reportAreas();
+  const sampled=areas.filter(a=>a.n>=8);
+  return {
+    strong:[...sampled].filter(a=>a.rate>=85).sort((a,b)=>b.rate-a.rate||b.n-a.n).slice(0,3),
+    weak:[...sampled].filter(a=>a.rate<75).sort((a,b)=>a.rate-b.rate||b.n-a.n).slice(0,3),
+    middle:[...sampled].filter(a=>a.rate>=75&&a.rate<85).sort((a,b)=>a.rate-b.rate).slice(0,3),
+    sampled:sampled.length
+  };
+}
+function reportSkillFromRecord(x){
+  if(x.skill && SKILLS[x.skill])return x.skill;
+  if(x.kind==='column')return 'written';
+  if(x.kind==='written')return 'decomposition';
+  if(x.kind==='compare')return 'compare';
+  if(x.kind==='div')return 'division';
+  if(x.kind==='mult')return Math.max(x.a,x.b)<=5?'easy':'hard';
+  return null;
+}
+function reportRecentMistakes(limit=14){
+  const mistakes=[];
+  for(const session of [...data.sessions].reverse()){
+    if(!Array.isArray(session.details))continue;
+    for(const d of [...session.details].reverse()){
+      if(d && d.correct===false){mistakes.push({...d,date:session.date,mode:session.mode});if(mistakes.length>=limit)return mistakes;}
+    }
+  }
+  return mistakes;
+}
+function reportErrorType(d){
+  if(d.kind==='column' && Array.isArray(d.steps)){
+    const digits=d.entered?.digits;
+    const carries=d.entered?.carries;
+    if(!Array.isArray(digits))return 'Starší úloha bez zachovaného postupu.';
+    const labels=['jednotky','desítky','stovky','tisíce'];
+    const badDigits=d.steps.flatMap((c,i)=>Number(digits[i])===Number(c.digit)?[]:[labels[i]||`sloupec ${i+1}`]);
+    const badCarry=d.steps.slice(0,-1).flatMap((c,i)=>Number(carries?.[i])===Number(c.carryOut)?[]:[`přenos z ${labels[i]}`]);
+    const note=[];
+    if(badDigits.length)note.push('Chyba v číslicích: '+badDigits.join(', '));
+    if(badCarry.length)note.push('Chyba v jedničce: '+badCarry.join(', '));
+    return note.join('. ')||'Nesedí celý postup.';
+  }
+  if(d.kind==='written' && Array.isArray(d.steps)){
+    const vals=[d.entered?.step1,d.entered?.step2,d.entered?.final];
+    const bad=['stovky','desítky','výsledek'].filter((label,i)=>vals[i]!==undefined && Number(vals[i])!==Number(d.steps[i]));
+    return bad.length?'Chyba: '+bad.join(', '):'Mezikroky nejsou v záznamu.';
+  }
+  return d.entered?.symbol!==undefined?`Zvoleno „${esc(d.entered.symbol)}“.` : d.entered?.final!==undefined?`Napsáno ${esc(d.entered.final)}.` : 'Původní odpověď se ve starší verzi neukládala.';
+}
+function reportQuestionLabel(d){
+  const sign=d.kind==='mult'?'×':d.kind==='div'?':':d.kind==='compare'?'□':(d.operation==='add'||d.kind==='add')?'+':'−';
+  return `${esc(d.a)} ${sign} ${esc(d.b)}`;
+}
+function reportRecommendations(){
+  const areas=reportAreas();
+  const find=id=>areas.find(a=>a.id===id);
+  const hard=find('hard'),easy=find('easy'),div=find('division'),written=find('written'),hundreds=find('hundreds'),compare=find('compare');
+  const weakFacts=Object.entries(data.facts).filter(([k,v])=>v.no>0 && v.yes+v.no>=2).sort((a,b)=>((b[1].no/(b[1].yes+b[1].no))-(a[1].no/(a[1].yes+a[1].no)))||b[1].no-a[1].no);
+  let factMessage=weakFacts.slice(0,3).map(([k])=>k.replace('x',' × ')).join(', ');
+  const suggestions=[];
+  if(hard.n<8 || hard.rate<85) suggestions.push({title:'Těžší násobilka',why:factMessage?`Zaměřit se hlavně na ${factMessage}. Nechat Charlotte výsledek odvodit a potom ho zopakovat.`:'Procvičit 6×6, 7×8, 8×8 a další těžší spoje, nejprve bez spěchu.',mode:'multiply',focus:null});
+  if(div.n<8 || div.rate<85)suggestions.push({title:'Dělení',why:'Navázat na násobilku: například 7 × 8 = 56, proto 56 : 7 = 8.',mode:'school',focus:'division'});
+  const school=[written,hundreds,compare,find('decomposition')].filter(a=>a.n>=8).sort((a,b)=>a.rate-b.rate);
+  const schoolTarget=school[0]||written;
+  if(schoolTarget.id==='written')suggestions.push({title:'Písemné počítání',why:'Procházet číslice zprava doleva; u chyb ověřit, kdy si Charlotte držela jedničku.',mode:'school',focus:'written'});
+  else if(schoolTarget.id==='decomposition')suggestions.push({title:'Rozklad čísel',why:'Opakovat stovky, desítky a jednotky po jednotlivých krocích.',mode:'school',focus:'decomposition'});
+  else if(schoolTarget.id==='compare')suggestions.push({title:'Porovnávání čísel',why:'Nejdřív porovnat stovky a teprve potom desítky a jednotky.',mode:'school',focus:'compare'});
+  else suggestions.push({title:'Počítání do 1 000',why:'Vysvětlovat přechod přes desítku a kontrolovat výsledek opačnou operací.',mode:'school',focus:'hundreds'});
+  if(!suggestions.length)suggestions.push({title:'Opakování násobilky',why:'Upevňovat výsledky, které už umí, a občas zařadit těžší příklady.',mode:'multiply',focus:null});
+  return suggestions.slice(0,3);
+}
+function reportErrorsByColumn(){
+  let digit=0,carry=0,total=0;
+  for(const s of data.sessions){
+    for(const d of s.details||[]){
+      if(d.kind!=='column'||!Array.isArray(d.steps)||!Array.isArray(d.entered?.digits))continue;
+      total++;
+      if(d.steps.some((x,i)=>Number(x.digit)!==Number(d.entered.digits[i])))digit++;
+      if(d.steps.slice(0,-1).some((x,i)=>Number(x.carryOut)!==Number(d.entered.carries?.[i])))carry++;
+    }
+  }
+  return {digit,carry,total};
+}
+function reportSessionTrend(){
+  const sessions=data.sessions.filter(s=>s.total>0 && s.yes!==undefined);
+  if(sessions.length<4)return null;
+  const recent=sessions.slice(-3),previous=sessions.slice(-6,-3);
+  if(previous.length<3)return null;
+  const sums=a=>({correct:a.reduce((sum,s)=>sum+Number(s.yes||0),0),total:a.reduce((sum,s)=>sum+Number(s.total||0),0)});
+  const r=sums(recent),p=sums(previous);
+  if(r.total<15 || p.total<15)return null;
+  return {recent:safePct(r.correct,r.total),previous:safePct(p.correct,p.total),recentN:r.total,previousN:p.total};
+}
+function reportHistoryRows(){
+  const list=Object.entries(data.daily.completed).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,10);
+  if(!list.length)return '<p class="report-subtle">Zatím žádný dokončený denní úkol.</p>';
+  return `<div class="report-history">${list.map(([day,s])=>{
+    const pct=safePct(Number(s.yes)||0,Number(s.total)||0)||0;
+    return `<div class="report-history-row"><span>${esc(day.split('-').reverse().join('.'))}</span><div class="report-track" aria-label="${pct} procent správně"><span style="width:${pct}%"></span></div><strong>${s.yes}/${s.total}</strong><span class="history-time">${minutesText(s.elapsedMs||0)}</span></div>`;
+  }).join('')}</div>`;
+}
+function reportBlockBreakdown(){
+  const last=[...data.sessions].reverse().find(s=>s.mode==='daily' && s.by && s.total);
+  if(!last)return '<p class="report-subtle">Až Charlotte dokončí první denní úkol, objeví se tady rozpis.</p>';
+  const groups=[
+    {name:'Násobilka',ids:['easy','hard']},
+    {name:'Dělení',ids:['division']},
+    {name:'Porovnávání',ids:['compare']},
+    {name:'Počítání do 1 000',ids:['hundreds']},
+    {name:'Písemné počítání',ids:['written']}
+  ];
+  return `<div class="skill-report-list">${groups.map(g=>{
+    const yes=g.ids.reduce((n,id)=>n+(Number(last.by[id]?.yes)||0),0);
+    const total=g.ids.reduce((n,id)=>n+(Number(last.by[id]?.total)||0),0);
+    const pct=safePct(yes,total);
+    return `<div class="skill-report"><div class="skill-report-top"><strong>${g.name}</strong><span>${yes}/${total}${pct!==null?' · '+pct+' %':''}</span></div><div class="progress"><span style="width:${pct||0}%"></span></div></div>`;
+  }).join('')}</div><p class="report-subtle">Poslední dokončený denní úkol: ${niceDate(last.date)}. Úspěšnost je z prvních odpovědí.</p>`;
+}
+function schoolGradesHistory(){
+  // Historie známek se od V11 zobrazuje i u běžného procvičování a denních úkolů.
+  // U starších uložených výsledků ji dopočítáme z uložených počtů prvních odpovědí.
+  const sessions=data.sessions.filter(s=>s && Number(s.total)>0 && Number.isFinite(Number(s.yes))).slice(-12).reverse();
+  return `<div class="report-card"><h3>📝 Známky ze cvičení i testů</h3>
+    <p class="report-subtle">Všechny známky jsou pouze orientační a počítají se z prvních odpovědí. Při procvičování měla Šája možnost nápovědy; skutečné hodnocení ve škole se může lišit. Záznamy předchozích verzí dopočítávám z uložených souhrnů.</p>
+    ${sessions.length?`<div class="result-list">${sessions.map(s=>{
+      const rate=Math.round(100*Number(s.yes)/Number(s.total));
+      return `<div class="result-card"><strong>${esc(sessionTitle(s))} · ${niceDate(s.date)}</strong><div class="num">${s.mode==='schoolTest'?'Testová':'Tréninková'} známka ${gradeForPercent(rate)}</div><div class="small">${s.yes}/${s.total} správně · ${rate} %</div></div>`;
+    }).join('')}</div>`:'<div class="notice">Zatím nebylo dokončeno žádné cvičení ani školní test.</div>'}
+  </div>`;
+}
+function reportHtml(){
+  const areas=reportAreas(),strengths=reportStrongWeak();
+  const trend=reportSessionTrend(),errors=reportErrorsByColumn();
+  const wrong=reportRecentMistakes(),recs=reportRecommendations();
+  const oldestHasLogs=data.sessions.some(s=>Array.isArray(s.details)&&s.details.some(d=>d.entered?.final!==undefined||d.entered?.symbol!==undefined));
+  const reportCount=data.sessions.length;
+  const trendText=trend===null?'Na srovnání potřebujeme aspoň šest dokončených cvičení.':trend.recent>trend.previous?`Poslední 3 tréninky: ${trend.recent} %, předchozí 3: ${trend.previous} %. Výsledky se orientačně zlepšily.`:trend.recent<trend.previous?`Poslední 3 tréninky: ${trend.recent} %, předchozí 3: ${trend.previous} %. Může hrát roli rozdílná obtížnost.`:`Poslední 3 tréninky: ${trend.recent} %, předchozí 3: ${trend.previous} %. Výsledek je podobný.`;
+  return `<div class="parent-report">
+   <div class="report-card">
+     <div class="eyebrow">📊 Podrobná analýza</div>
+     <h3 style="font-size:1.4rem;margin-top:6px">V čem se Charlotte daří a co ještě upevnit</h3>
+     <p class="report-subtle">Hodnotím správnost odpovědí, ne inteligenci nebo schopnosti Charlotte. Při méně než 8 odpovědích v oblasti zatím nedávám závěrečné hodnocení. Přesnost není totéž co rychlost.</p>
+     <div class="report-kpis" style="margin-top:14px">
+       <div class="report-kpi"><span class="figure">${reportCount}</span><small>Dokončených tréninků</small></div>
+       <div class="report-kpi"><span class="figure">${totalCorrect()}/${totalAnswers()}</span><small>Správných zadaných odpovědí</small></div>
+       <div class="report-kpi"><span class="figure">${safePct(totalCorrect(),totalAnswers())??'—'}${totalAnswers()?' %':''}</span><small>Dosavadní úspěšnost</small></div>
+     </div>
+     <div class="report-columns" style="margin-top:14px">
+       <section class="report-card" style="box-shadow:none;background:#f9fffb"><h3>🌟 V čem se jí daří</h3>
+       <div class="report-list">${strengths.strong.length?strengths.strong.map(a=>`<div class="report-item good"><strong>${a.emoji} ${a.name} · ${a.rate} %</strong><p>Správně ${a.yes} z ${a.n} odpovědí. Tuhle oblast už může hlavně upevňovat.</p></div>`).join(''):'<div class="report-item neutral"><strong>Zatím potřebujeme víc výsledků</strong><p>Silnou oblast označím po alespoň 8 příkladech a úspěšnosti 85 % nebo více.</p></div>'}</div></section>
+       <section class="report-card" style="box-shadow:none;background:#fffaf5"><h3>🎯 Co ještě potrénovat</h3>
+       <div class="report-list">${strengths.weak.length?strengths.weak.map(a=>`<div class="report-item attention"><strong>${a.emoji} ${a.name} · ${a.rate} %</strong><p>Správně ${a.yes} z ${a.n}. Vhodné pro krátké cílené opakování.</p></div>`).join(''):'<div class="report-item neutral"><strong>Zatím bez průkazně slabé oblasti</strong><p>To může znamenat dobré výsledky, ale také málo procvičených příkladů.</p></div>'}</div></section>
+     </div>
+   </div>
+   <div class="report-card"><h3>💡 Co doporučuji na další procvičování</h3>
+     <p class="report-subtle">Navržené pořadí ber jako výchozí doporučení podle uložených výsledků. Kde je dat málo, jde o cílené ověření, ne potvrzenou slabinu.</p>
+     <div class="reco-plan">${recs.map((r,i)=>`<div class="reco-step"><span class="time">${[8,5,5][i]||5} minut</span><strong>${esc(r.title)}</strong><small>${esc(r.why)}</small><div style="margin-top:12px"><button class="btn secondary tiny" data-reco="${i}">▶️ Procvičit</button></div></div>`).join('')}</div>
+     <div class="notice"><strong>Jak poznat pokrok:</strong> Stejný typ úloh by měla Charlotte zvládnout správně několikrát v různých dnech. Teprve potom má smysl očekávat rychlejší odpověď. Nedělej z toho závod se stopkami.</div>
+   </div>
+   ${schoolGradesHistory()}
+   <div class="report-card"><h3>🧮 Výsledky ve všech oblastech</h3><div class="skill-report-list">${areas.map(a=>{
+      const c=resultClass(a.rate,a.n);
+      const label=a.n===0?'Nezkoušeno':a.n<8?'Málo údajů':c==='good'?'Daří se':c==='attention'?'Procvičit':'Upevňovat';
+      return `<div class="skill-report"><div class="skill-report-top"><strong>${a.emoji} ${a.name}</strong><div><span class="status-tag ${c}">${label}</span> <small>${a.yes}/${a.n} · ${a.rate===null?'—':a.rate+' %'}</small></div></div><div class="progress"><span style="width:${a.rate||0}%"></span></div></div>`;
+   }).join('')}</div><p class="report-subtle">Zobrazuje všechny uložené pokusy včetně dříve ukončených cvičení; někde se objevuje různě obtížné učivo.</p></div>
+   <div class="report-card"><h3>📅 Denní úkoly a jejich vývoj</h3>${reportHistoryRows()}<p class="report-subtle">Sloupečky ukazují procento správně v dokončených denních úkolech; čas najdeš vpravo.</p><p class="report-subtle"><strong>Trend:</strong> ${trendText} Srovnání používá i jiné typy tréninků, proto je jen orientační.</p><h3 style="margin-top:19px">Poslední denní úkol – rozdělení po částech</h3>${reportBlockBreakdown()}</div>
+   <div class="report-card"><h3>✖️ Konkrétní násobilkové příklady k opakování</h3>
+   <div class="chips">${Object.entries(data.facts).filter(([k,v])=>v.no>0).sort((a,b)=>(b[1].no/(b[1].yes+b[1].no))-(a[1].no/(a[1].yes+a[1].no)) || b[1].no-a[1].no).slice(0,12).map(([key,v])=>`<span class="chip">${esc(key.replace('x',' × '))} · ${v.yes}× správně / ${v.no}× chyba</span>`).join('')||'<span class="small">Zatím nejsou uložené chybně vypočítané spoje.</span>'}</div>
+   <p class="report-subtle">Výsledky násobilky se evidují pro obě pořadí společně (např. 6×8 i 8×6).</p></div>
+   <div class="report-card"><h3>✍️ Písemné počítání – kde vznikají chyby</h3>
+   ${errors.total?`<div class="report-kpis"><div class="report-kpi"><span class="figure">${errors.total}</span><small>Příkladů s uloženými kroky</small></div><div class="report-kpi"><span class="figure">${errors.digit}</span><small>Příkladů s chybou v číslici</small></div><div class="report-kpi"><span class="figure">${errors.carry}</span><small>Příkladů s chybou při přenosu jedničky</small></div></div>`:'<div class="notice">Až Charlotte udělá písemné počítání, ukáže se, zda chybuje spíše v jednotlivých číslicích, nebo v přenosech.</div>'}
+   <p class="report-subtle">Jedna úloha může obsahovat oba druhy chyb. V novějších cvičeních níže zobrazím i konkrétní zadané kroky.</p></div>
+   <div class="report-card"><h3>🕵️ Poslední chybné odpovědi</h3>
+     <div class="wrong-examples">${wrong.length?wrong.map(d=>`<div class="wrong-example"><strong>${reportQuestionLabel(d)} → správně ${esc(d.expected)}</strong><small>${SKILLS[reportSkillFromRecord(d)]?.name||'Matematika'} · ${niceDate(d.date)}</small><div class="small">${reportErrorType(d)}</div></div>`).join(''):'<p class="report-subtle">Zatím nejsou v dokončených cvičeních zaznamenané konkrétní chybné odpovědi.</p>'}</div>
+     <p class="report-subtle">U starších verzí nemusí být u některých příkladů uložená zadaná odpověď. Nová V7 ji zaznamenává při každém příkladu, aby šlo chyby probrat.</p>
+   </div>
+
+  </div>`;
+}
+
+function parentsHtml(){
+  const recent=[...data.sessions].reverse().slice(0,12),weak=Object.entries(data.facts).filter(([,f])=>f.no>0).sort((a,b)=>(b[1].no-b[1].yes)-(a[1].no-a[1].yes)).slice(0,18);
+  return `<section class="panel"><div class="status-row"><div><div class="eyebrow">👨‍👩‍👧 Pro rodiče</div><h2 class="section-title">Rodičovský přehled</h2></div><button class="btn secondary tiny" id="lock-parent">🔒 Zamknout</button></div>
+   ${reportHtml()}
+   <h3 class="section-title" style="margin-top:22px">Uložení výsledků a nastavení</h3>
+   <div class="notice"><strong>Výměna verze hry:</strong> Ulož výsledky do souboru a pak je v nové verzi načti. Hodí se to i při změně prohlížeče či počítače.</div>
+   <div class="parent-actions"><button class="btn secondary" id="export-results">⬇️ Uložit výsledky</button><button class="btn secondary" id="import-results">⬆️ Načíst výsledky</button><input id="import-file" class="hidden" type="file" accept=".json,application/json"><button class="btn secondary" id="repeat-test">🔍 Zopakovat vstupní test</button><button class="btn warn" id="reset-all">🗑️ Vymazat všechny výsledky</button></div>
+   ${storageError?'<p class="pin-error">Prohlížeč nepovolil ukládání. Doporučujeme exportovat výsledky do souboru.</p>':''}
+
+  </section>`;
+}
+function sessionTitle(s){
+  if(s.mode==='daily')return 'Denní úkol (cca 20 min)';
+  if(s.mode==='schoolTest')return 'Školní test se známkou';
+  if(s.mode==='diagnostic')return 'Úvodní test';
+  if(s.mode==='multiply')return 'Jen násobilka';
+  if(s.mode==='table')return s.focus==='mix'?'Smíšená násobilka':`Násobilka ${s.focus}×`;
+  if(s.mode==='practice'||s.mode==='school')return SKILLS[s.focus]?.name||'Procvičování';
+  return 'Cvičení';
+}
+function exportResults(){
+  const contents=JSON.stringify({fileType:'charlotte-matematicka-akademie',version:11,exported:new Date().toISOString(),results:data},null,2);
+  const blob=new Blob([contents],{type:'application/json;charset=utf-8'});
+  const uri=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=uri;a.download='charlotte-vysledky.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(uri),2000);
+}
+function importResults(file){
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const parsed=JSON.parse(reader.result);
+      if(parsed.fileType!=='charlotte-matematicka-akademie' || !parsed.results?.skills || !parsed.results?.sessions || !parsed.results?.facts)throw new Error('invalid');
+      if(confirm('Načíst uložené výsledky? Současné výsledky v této verzi se tím nahradí.')){
+        data=sanitise(parsed.results);selectedTable=data.settings.tableSelection;soundOn=data.settings.sound;schoolRange=data.settings.schoolRange;save();render();alert('Výsledky byly načteny.');
+      }
+    }catch(e){alert('Tohle není platný soubor s výsledky Charlotte.');}
+  };
+  reader.onerror=()=>alert('Soubor se nepodařilo načíst.');reader.readAsText(file,'utf-8');
+}
+function wire(){
+  const on=(selector,type,fn)=>{const el=$(selector);if(el)el.addEventListener(type,fn);};
+  on('#start-diagnostic','click',()=>start('diagnostic'));
+  on('#start-school-test','click',()=>start('schoolTest'));
+  on('#read-question','click',voiceQuestion);
+  on('#start-daily','click',()=>hasDailyActive()?resumeDaily():start('daily'));
+  on('#start-mult-only','click',()=>start('multiply'));
+  on('#practice-multiplication-only','click',()=>start('multiply'));
+  on('#recommended-practice','click',()=>start('practice',recommendedSkill()));
+  document.querySelectorAll('[data-jump]').forEach(btn=>btn.addEventListener('click',()=>go(btn.dataset.jump)));
+  document.querySelectorAll('[data-skill]').forEach(btn=>btn.addEventListener('click',()=>start('practice',btn.dataset.skill)));
+  document.querySelectorAll('[data-row]').forEach(btn=>btn.addEventListener('click',()=>{selectedTable=btn.dataset.row;save();render();}));
+  document.querySelectorAll('[data-avatar]').forEach(btn=>btn.addEventListener('click',()=>{data.settings.avatar=btn.dataset.avatar;save();render();}));
+  on('#start-table','click',()=>start('table',selectedTable));
+  document.querySelectorAll('[data-school]').forEach(btn=>btn.addEventListener('click',()=>start('school',btn.dataset.school)));
+  document.querySelectorAll('[data-compare]').forEach(btn=>btn.addEventListener('click',()=>checkCompare(btn.dataset.compare)));
+  on('#written-form','submit',e=>{e.preventDefault();checkWritten();});
+  on('#column-form','submit',e=>{e.preventDefault();checkColumn();});
+  document.querySelectorAll('input[name="school-range"]').forEach(el=>el.addEventListener('change',()=>{schoolRange=Number(el.value);save();render();}));
+  on('#quit-game','click',quitGame);
+  on('#answer-form','submit',e=>{e.preventDefault();checkAnswer();});
+  on('#next-question','click',nextQuestion);
+  on('#try-correction','click',()=>{feedback.stage='correction';if(game?.mode==='daily')saveDailySnapshot();render();});
+  on('#parent-pin-form','submit',async e=>{
+    e.preventDefault();
+    const code=$('#parent-pin').value;
+    let matches=false;
+    try{
+      const result=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(code));
+      const hash=Array.from(new Uint8Array(result),x=>x.toString(16).padStart(2,'0')).join('');
+      matches=hash===PARENT_CODE_HASH;
+    }catch(err){matches=false;}
+    if(matches){parentUnlocked=true;pinError=false;go('parents');}
+    else{pinError=true;render();}
+  });
+  on('#lock-parent','click',()=>{parentUnlocked=false;go('home');});
+  on('#repeat-test','click',()=>{if(confirm('Zopakovat vstupní test? Dosavadní výsledky se nesmažou.'))start('diagnostic');});
+  on('#reset-all','click',()=>{if(confirm('Opravdu nevratně vymazat výsledky Charlotte?')){data=initial();selectedTable='mix';soundOn=true;schoolRange=1000;save();parentUnlocked=false;go('home');}});
+  document.querySelectorAll('[data-reco]').forEach(btn=>btn.addEventListener('click',()=>{const rec=reportRecommendations()[Number(btn.dataset.reco)];if(rec)start(rec.mode,rec.focus);}));
+  on('#export-results','click',exportResults);
+  on('#import-results','click',()=>$('#import-file').click());
+  on('#import-file','change',e=>importResults(e.target.files[0]));
+}
+function render(){
+  document.querySelectorAll('#nav [data-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.view===view));
+  $('#level-pill').textContent=`⭐ Úroveň ${level()}`;
+  const soundBtn=$('#sound-toggle');soundBtn.textContent=soundOn?'🔊 Zvuk zapnutý':'🔇 Zvuk vypnutý';soundBtn.setAttribute('aria-pressed',String(soundOn));
+  const voiceBtn=$('#voice-toggle');voiceBtn.textContent=data.settings.voice?'🗣️ Učitelka zapnutá':'🔇 Učitelka vypnutá';voiceBtn.setAttribute('aria-pressed',String(data.settings.voice));
+  const content={home:homeHtml,daily:dailyHtml,practice:practiceHtml,tablePractice:tablePracticeHtml,tableOverview:tableOverviewHtml,school:schoolHtml,schoolTest:schoolTestHtml,game:gameHtml,summary:summaryHtml,progress:progressHtml,parentGate:parentGateHtml,parents:parentsHtml};
+  $('#main').innerHTML=(content[view]||homeHtml)();
+  wire();
+  if(view==='game' && (!feedback || feedback.stage==='correction'))($('#number-answer')||$('#col-digit-0')||$('#written-step1'))?.focus();
+  if(view==='parentGate')$('#parent-pin')?.focus();
+}
+$('#nav').addEventListener('click',e=>{const btn=e.target.closest('[data-view]');if(btn)go(btn.dataset.view);});
+$('#parent-button').addEventListener('click',()=>{parentUnlocked=false;go('parents');});
+$('#sound-toggle').addEventListener('click',()=>{soundOn=!soundOn;save();render();if(soundOn)playSound('correct');});
+$('#voice-toggle').addEventListener('click',()=>{data.settings.voice=!data.settings.voice;save();render();if(data.settings.voice)speak('Ahoj, Šájo! Dneska si společně procvičíme matematiku.');});
+$('#voice-demo').addEventListener('click',()=>{
+  if(!csVoice()){alert('V systému zatím není dostupný český hlas. Zkus v nastavení Windows doinstalovat český hlas pro předčítání.');return;}
+  speak('Výborně, Šájo! Správně, Šájo! Tohle bylo špatně, Šájo. Zkus si příklad rozdělit na menší části.',true);
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&view==='game'&&feedback&&feedback.stage!=='correction'&&e.target?.tagName!=='BUTTON'){e.preventDefault();nextQuestion();}});
+render();
+
+</script>
+<script>
+(function () {
+  if (!('serviceWorker' in navigator) || !window.isSecureContext) return;
+  let waitingWorker = null;
+  const banner=document.getElementById('pwa-update');
+  function offerUpdate(sw){
+    if(!sw || !navigator.serviceWorker.controller)return;
+    waitingWorker=sw;
+    banner.hidden=false;
+  }
+  document.getElementById('pwa-update-now').addEventListener('click',function(){
+    if(!waitingWorker)return;
+    // Běžná rozehraná cvičení se ukládají až na konci; nikdy je nezrušit bez upozornění.
+    if(typeof game !== 'undefined' && game){
+      if(!window.confirm('Teď počítáš příklady. Aktualizace může přerušit tento test. Chceš pokračovat?')) return;
+      if(game.mode==='daily' && typeof saveDailySnapshot==='function') saveDailySnapshot();
+    }
+    waitingWorker.postMessage({type:'SKIP_WAITING'});
+  });
+  let once=false;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(!once){once=true;window.location.reload();}
+  });
+  window.addEventListener('load',async function(){
+    try{
+      const reg=await navigator.serviceWorker.register('../sw.js',{updateViaCache:'none'});
+      if(reg.waiting)offerUpdate(reg.waiting);
+      reg.addEventListener('updatefound',function(){
+        const sw=reg.installing;
+        if(!sw)return;
+        sw.addEventListener('statechange',function(){
+          if(sw.state==='installed')offerUpdate(reg.waiting||sw);
+        });
+      });
+      // Kontrola aktualizací při spuštění nebo návratu do aplikace.
+      document.addEventListener('visibilitychange',function(){if(!document.hidden && navigator.onLine)reg.update().catch(()=>{});});
+      window.addEventListener('online',function(){reg.update().catch(()=>{});});
+    }catch(err){console.warn('Instalace offline režimu nebyla dokončena:',err);}
+  });
+})();
+</script>
+</body>
+</html>
