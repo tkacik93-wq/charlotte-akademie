@@ -394,6 +394,13 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 .shell.math-focus .question-box{min-width:0;padding:20px 12px}
 .shell.math-focus .game-wrap{padding:clamp(18px,3vw,30px)}
 @media(max-width:600px){.shell.math-focus .question-box{padding:14px 2px}.shell.math-focus .game-wrap{padding:16px 12px}}
+
+.learn-expression{font-size:clamp(1.7rem,6vw,3rem);font-weight:850;margin:18px 0;font-variant-numeric:tabular-nums}
+.learn-places{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.learn-places>div{padding:16px;border-radius:18px;background:#f1edff;border:1px solid #d8ccff}
+.learn-places strong{display:block;font-size:2rem}.learn-places span,.learn-places b{display:block;margin-top:8px}
+.learn-help{padding:14px;background:#eafff4;border-radius:14px;line-height:1.8}
+@media(max-width:540px){.learn-places{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -415,6 +422,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 
   <nav class="nav" id="nav">
     <button type="button" data-view="home" class="active">🏠 Domů</button>
+    <button type="button" data-view="learning">🌱 Nauč mě to</button>
     <button type="button" data-view="daily">📅 Denní úkol</button>
     <button type="button" data-view="practice">🧮 Procvičování</button>
     <button type="button" data-view="tablePractice">✖️ Jen násobilka</button>
@@ -1076,6 +1084,7 @@ function finishGame(){
   go('summary');
 }
 function go(next){
+  if(view==='learning' && 'speechSynthesis' in window)speechSynthesis.cancel();
   if(game?.mode==='daily' && view==='game' && next!=='game' && next!=='summary'){
     saveDailySnapshot();game=null;feedback=null;dailyClockAnchor=null;
   }
@@ -1112,6 +1121,78 @@ function trophyRack(compact=false){
   return `<div class="trophy-rack ${compact?'small-rack':''}">${badges.map(n=>`<div class="trophy ${data.badges[n]?'earned':''}" title="${data.badges[n]?'Odměna získána '+niceDate(data.badges[n]):'Získej 9 z 9 v násobilce '+n}">
     <span class="trophy-icon">${data.badges[n]?'⭐':'☆'}</span><strong>${n}×</strong></div>`).join('')}</div>`;
 }
+
+// Vedené učení má vlastní stav a nemění známky, XP ani denní úkoly.
+const LEARNING_LESSONS=[
+ {title:'Sčítání bez přechodu',op:'add',demo:[234,125],practice:[342,216]},
+ {title:'Sčítání přes desítku',op:'add',demo:[268,157],practice:[376,248]},
+ {title:'Odčítání bez přechodu',op:'sub',demo:[586,243],practice:[769,325]},
+ {title:'Odčítání přes desítku',op:'sub',demo:[532,178],practice:[643,267]},
+ {title:'Odčítání přes nuly',op:'sub',demo:[500,126],practice:[600,248]}
+];
+let learning=null;
+function learningSteps(a,b,op){
+ const parts=[Math.floor(b/100)*100,Math.floor(b/10)%10*10,b%10];
+ let value=a;
+ return parts.map((part,i)=>{
+  const from=value;value+=op==='add'?part:-part;
+  const sign=op==='add'?'+':'−';
+  let explanation=part===0?'Tady je nula, takže číslo zůstane stejné.':`Teď ${op==='add'?'přičteme':'odečteme'} ${part}.`;
+  // Při přechodu nejdřív dojdeme k nejbližší celé stovce/desítce.
+  const boundary=i===1?100:i===2?10:0;
+  if(boundary&&part){
+   const first=op==='add'?boundary-from%boundary:from%boundary;
+   if(part>first){
+    const mid=op==='add'?from+first:from-first,rest=part-first;
+    explanation=first===0
+     ?`Jsme na celé ${boundary===100?'stovce':'desítce'}. Zkus menší krok: ${from} ${sign} ${boundary} = ${from-boundary}. My odebíráme jen ${part}, proto ${boundary-part} vrátíme: ${from-boundary} + ${boundary-part} = ${value}.`
+     :`Rozdělíme ${part} na ${first} a ${rest}. Nejdřív ${from} ${sign} ${first} = ${mid}. Potom ${mid} ${sign} ${rest} = ${value}.`;
+   }
+  }
+  return {from,part,value,sign,name:['Stovky','Desítky','Jednotky'][i],explanation};
+ });
+}
+function startLearning(index,practice=false){
+ learning={index,practice,step:-1,solved:false,hint:false,message:''};render();
+}
+function learningCurrent(){
+ const lesson=LEARNING_LESSONS[learning.index];
+ const [a,b]=lesson[learning.practice?'practice':'demo'];
+ return {lesson,a,b,steps:learningSteps(a,b,lesson.op)};
+}
+function learningHtml(){
+ if(!learning)return `<section class="panel"><div class="eyebrow">🌱 Nejdřív pochopit, potom procvičovat</div><h2>Nauč mě to</h2><p>Šájo, projdeme spolu sčítání a odčítání trojciferných čísel. Nemusíš to už umět. Tady nejsou známky ani časový limit.</p><div class="notice"><strong>Jak budeme počítat?</strong><br>Druhé číslo rozdělíme na stovky, desítky a jednotky. Budeme je postupně přidávat nebo ubírat. To je počítání po částech.</div><div class="skill-grid">${LEARNING_LESSONS.map((l,i)=>`<button class="skill-btn" data-lesson="${i}"><span class="big">${l.op==='add'?'➕':'➖'}</span><strong>${i+1}. ${l.title}</strong><small>Ukážu ti postup → zkusíme to společně</small></button>`).join('')}</div></section>`;
+ const {lesson,a,b,steps}=learningCurrent(),sign=lesson.op==='add'?'+':'−',i=learning.step;
+ const head=`<section class="panel game-wrap"><div class="status-row"><span class="tag">${learning.practice?'✏️ Počítáme spolu':'👩‍🏫 Ukážu ti postup'}</span><button class="btn secondary tiny" id="learning-menu">← Všechny lekce</button></div><h2>${lesson.title}</h2><p class="small">Počítání po částech · bez známek · vlastním tempem</p><div class="learn-expression">${a} ${sign} ${b}</div>`;
+ if(i===-1)return head+`<div id="learning-reading"><h3>Nejdřív si čísla rozložíme</h3><div class="learn-places">${[a,b].map(n=>`<div><strong>${n}</strong><span>Stovky: ${Math.floor(n/100)} · desítky: ${Math.floor(n/10)%10} · jednotky: ${n%10}</span><b>${Math.floor(n/100)*100} + ${Math.floor(n/10)%10*10} + ${n%10}</b></div>`).join('')}</div><p>Jednotka je jeden dílek. Desítka je deset jednotek. Stovka je deset desítek.</p><p>Začneme číslem <strong>${a}</strong>. Číslo <strong>${b}</strong> rozdělíme na <strong>${steps.map(x=>x.part).join(' + ')}</strong>. Tyto části budeme postupně ${lesson.op==='add'?'přičítat':'odčítat'}.</p></div><div class="parent-actions"><button class="btn mint" id="learning-next">Začít stovkami →</button>${learningVoiceButton()}</div></section>`;
+ if(i===3)return head+`<div id="learning-reading" class="feedback"><h3>${learning.practice?'Zvládla jsi všechny tři kroky!':'A máme hotovo!'}</h3>${steps.map(x=>`<p>${x.name}: <strong>${x.from} ${sign} ${x.part} = ${x.value}</strong></p>`).join('')}<p><strong>${a} ${sign} ${b} = ${steps[2].value}</strong></p><p>${learning.practice?'Můžeš si postup zopakovat, kdykoli budeš chtít.':'Teď zkusíme podobný příklad spolu. Pomůžu ti u každého kroku.'}</p></div><div class="parent-actions"><button class="btn mint" id="learning-practice">${learning.practice?'Zkusit znovu':'Teď to zkusíme spolu →'}</button><button class="btn secondary" id="learning-repeat">Znovu vysvětlit</button>${learning.index<LEARNING_LESSONS.length-1&&learning.practice?'<button class="btn secondary" id="learning-next-lesson">Další lekce →</button>':''}${learningVoiceButton()}</div></section>`;
+ const step=steps[i],show=!learning.practice||learning.solved;
+ return head+`<div class="chips">${steps.map((x,j)=>`<span class="chip" ${j===i?'aria-current="step" style="background:#ded5ff"':''}>${j<i?'✓ ':''}${j+1}. ${x.name}</span>`).join('')}</div>${i?`<p>V minulém kroku nám vyšlo <strong>${step.from}</strong>. Teď pokračujeme s tímto číslem.</p>`:''}<div id="learning-reading" class="calculation"><h3>${i+1}. ${step.name}</h3><p>${lesson.op==='add'?'Přidáme':'Ubereme'} ${step.part}. ${i===0?'Desítky a jednotky zatím necháme.':i===1?'Jednotky přijdou na řadu potom.':'To je poslední část.'}</p><div class="learn-expression">${step.from} ${sign} ${step.part} = ${show?step.value:'?'}</div>${show||learning.hint?`<p class="learn-help">${step.explanation}</p>`:''}</div>${learning.practice&&!learning.solved?`<form id="learning-form"><label class="answer-label" for="learning-answer">Kolik máme po tomto kroku?</label><input class="answer" id="learning-answer" type="text" readonly inputmode="none" data-math-input maxlength="3" aria-label="Výsledek tohoto kroku" autocomplete="off">${mathNumpadHtml(false)}<div class="parent-actions"><button class="btn mint" type="submit">Zkontrolovat krok</button><button class="btn secondary" id="learning-hint" type="button">Pomoz mi</button></div><p role="status">${learning.message}</p></form>`:''}${learning.solved?'<p class="feedback">Ano, přesně tak! Teď můžeme pokračovat.</p>':''}<div class="parent-actions"><button class="btn secondary" id="learning-back">← Zpět</button>${show?`<button class="btn mint" id="learning-next">${i===2?'Ukázat celý postup':'Další krok →'}</button>`:''}${learningVoiceButton()}</div></section>`;
+}
+function learningVoiceButton(){return `<button class="btn secondary" id="learning-read">🔊 Přečíst vysvětlení</button>${csVoice()?'':'<small class="small">Český hlas není v zařízení dostupný. Vysvětlení můžeš číst.</small>'}`;}
+function wireLearning(){
+ document.querySelectorAll('[data-lesson]').forEach(b=>b.onclick=()=>startLearning(Number(b.dataset.lesson)));
+ const on=(id,fn)=>{const el=document.getElementById(id);if(el)el.onclick=fn;};
+ const resetStep=()=>{learning.solved=false;learning.hint=false;learning.message='';render();};
+ on('learning-menu',()=>{learning=null;render();});
+ on('learning-next',()=>{learning.step++;resetStep();});
+ on('learning-back',()=>{learning.step--;resetStep();});
+ on('learning-repeat',()=>startLearning(learning.index));
+ on('learning-practice',()=>startLearning(learning.index,true));
+ on('learning-next-lesson',()=>startLearning(learning.index+1));
+ on('learning-hint',()=>{learning.hint=true;render();});
+ on('learning-read',()=>{const text=document.getElementById('learning-reading').innerText.replace(/\d+/g,n=>spokenNumber(Number(n))).replace(/\+/g,' plus ').replace(/−/g,' mínus ').replace(/=/g,' je ');speak(text,true);});
+ const form=document.getElementById('learning-form');
+ if(form)form.onsubmit=e=>{
+  e.preventDefault();const field=document.getElementById('learning-answer'),answer=field.value.trim();
+  const {steps}=learningCurrent();
+  if(!/^\d+$/.test(answer)){learning.message='Nejdřív napiš číslo pomocí tlačítek.';}
+  else if(Number(answer)===steps[learning.step].value){learning.solved=true;learning.message='';}
+  else{learning.hint=true;learning.message='To ještě není ono. Podívej se na rozdělení kroku nad klávesnicí. Zkusíme to znovu, nikam nespěcháme.';}
+  render();
+ };
+}
+
 function homeHtml(){
   const earned=Array.from({length:10},(_,i)=>Number(Boolean(data.badges[i+1]))).reduce((a,b)=>a+b,0);
   return `<div class="home-grid">
@@ -1120,6 +1201,7 @@ function homeHtml(){
       <h2>Každý příklad je malý krok vpřed.</h2>
       <p>Vyber si procvičování. Nespěchej – nejdřív správně, potom rychleji. A když to nevyjde, společně na to přijdeme.</p>
       <div class="hero-buttons">
+        <button class="btn" data-jump="learning">🌱 Nauč mě to – sčítání a odčítání</button>
         <button class="btn mint" id="start-diagnostic">${data.diagnosticDone?'🔍 Zopakovat úvodní test':'🔍 Začít úvodní test'}</button>
         <button class="btn" id="start-mult-only">✖️ Jen násobilka</button>
       </div>
@@ -1661,6 +1743,7 @@ function importResults(file){
   reader.onerror=()=>alert('Soubor se nepodařilo načíst.');reader.readAsText(file,'utf-8');
 }
 function wire(){
+  wireLearning();
   wireMathPad();
   const on=(selector,type,fn)=>{const el=$(selector);if(el)el.addEventListener(type,fn);};
   on('#start-diagnostic','click',()=>start('diagnostic'));
@@ -1710,7 +1793,7 @@ function render(){
   $('#level-pill').textContent=`⭐ Úroveň ${level()}`;
   const soundBtn=$('#sound-toggle');soundBtn.textContent=soundOn?'🔊 Zvuk zapnutý':'🔇 Zvuk vypnutý';soundBtn.setAttribute('aria-pressed',String(soundOn));
   const voiceBtn=$('#voice-toggle');voiceBtn.textContent=data.settings.voice?'🗣️ Učitelka zapnutá':'🔇 Učitelka vypnutá';voiceBtn.setAttribute('aria-pressed',String(data.settings.voice));
-  const content={home:homeHtml,daily:dailyHtml,practice:practiceHtml,tablePractice:tablePracticeHtml,tableOverview:tableOverviewHtml,school:schoolHtml,schoolTest:schoolTestHtml,game:gameHtml,summary:summaryHtml,progress:progressHtml,parentGate:parentGateHtml,parents:parentsHtml};
+  const content={learning:learningHtml,home:homeHtml,daily:dailyHtml,practice:practiceHtml,tablePractice:tablePracticeHtml,tableOverview:tableOverviewHtml,school:schoolHtml,schoolTest:schoolTestHtml,game:gameHtml,summary:summaryHtml,progress:progressHtml,parentGate:parentGateHtml,parents:parentsHtml};
   $('#main').innerHTML=(content[view]||homeHtml)();
   wire();
   // Výběr aktivního pole provádí vlastní klávesnice; systémovou klávesnici nikdy neotvíráme.
@@ -1770,3 +1853,4 @@ render();
 </script>
 </body>
 </html>
+
